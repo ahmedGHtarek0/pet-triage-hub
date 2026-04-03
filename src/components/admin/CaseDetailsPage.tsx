@@ -282,9 +282,8 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
                   reader.onload = () => {
-                    const photos = user.photos || [];
+                    const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
-                    updateUser(user.id, { photos });
                     updateUser(user.id, { photos });
                     onRefresh();
                     toast.success("Media uploaded");
