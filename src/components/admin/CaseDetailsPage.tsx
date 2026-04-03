@@ -327,6 +327,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
         </div>
       )}
 
+      {/* Photo Lightbox */}
+      {lightboxIndex !== null && user.photos && user.photos.length > 0 && (
+        <PhotoLightbox
+          photos={user.photos}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+
       {/* Treatment Form Modal */}
       {showTreatmentForm && (
         <TreatmentFormModal
