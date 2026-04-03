@@ -44,11 +44,33 @@ export default function HomePage() {
 
       {/* Hero */}
       <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
-        <video
-          autoPlay muted loop playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          src={content.hero.videoUrl}
-        />
+        {content.hero.videoUrl && (
+          /youtube\.com|youtu\.be|facebook\.com|fb\.watch|vimeo\.com/.test(content.hero.videoUrl) ? (
+            <iframe
+              src={
+                content.hero.videoUrl.includes("youtube.com/watch")
+                  ? content.hero.videoUrl.replace(/watch\?v=/, "embed/") + "?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&playlist=" + (content.hero.videoUrl.match(/[?&]v=([^&]+)/)?.[1] || "")
+                  : content.hero.videoUrl.includes("youtu.be")
+                  ? "https://www.youtube.com/embed/" + content.hero.videoUrl.split("/").pop() + "?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&playlist=" + content.hero.videoUrl.split("/").pop()
+                  : content.hero.videoUrl.includes("facebook.com") || content.hero.videoUrl.includes("fb.watch")
+                  ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(content.hero.videoUrl)}&autoplay=1&mute=1`
+                  : content.hero.videoUrl.includes("vimeo.com")
+                  ? content.hero.videoUrl.replace("vimeo.com/", "player.vimeo.com/video/") + "?autoplay=1&muted=1&loop=1&background=1"
+                  : content.hero.videoUrl
+              }
+              className="absolute inset-0 w-full h-full object-cover border-0 pointer-events-none scale-150"
+              allow="autoplay; fullscreen"
+              title="Hero background"
+            />
+          ) : (
+            <video
+              autoPlay muted loop playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              src={content.hero.videoUrl}
+              onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
+            />
+          )
+        )}
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative z-10 text-center px-4 animate-fade-in-up">
           <img src="/images/logo.png" alt="Pet Planet" className="w-24 h-24 mx-auto mb-6 animate-float" />
