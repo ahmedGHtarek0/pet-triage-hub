@@ -310,7 +310,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                   <button
                     onClick={() => {
                       const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      const { updateUser } = require("@/lib/data");
+                      updateUser(user.id, { photos });
                       updateUser(user.id, { photos });
                       onRefresh();
                       toast.success("Media deleted");
