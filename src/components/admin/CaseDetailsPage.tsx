@@ -392,27 +392,31 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
   const [drugs, setDrugs] = useState(treatment?.drugs?.join(", ") || "");
   const [time, setTime] = useState(treatment?.time?.join(", ") || "");
   const [notes, setNotes] = useState(treatment?.notes || "");
+  const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) { toast.error("Date is required"); return; }
-    const data: Treatment = {
-      id: treatment?.id || `t${Date.now()}`,
-      date,
-      staff: staff || undefined,
-      drugs: drugs ? drugs.split(",").map(d => d.trim()) : undefined,
-      time: time ? time.split(",").map(t => t.trim()) : undefined,
-      notes: notes || undefined,
-      photos: treatment?.photos || [],
-    };
-    if (treatment) {
-      await updateTreatment(userId, treatment.id, data);
-      toast.success("Treatment updated");
-    } else {
-      await addTreatment(userId, data);
-      toast.success("Treatment added");
-    }
-    onSave();
+    setSaving(true);
+    try {
+      const data: Treatment = {
+        id: treatment?.id || `t${Date.now()}`,
+        date,
+        staff: staff || undefined,
+        drugs: drugs ? drugs.split(",").map(d => d.trim()) : undefined,
+        time: time ? time.split(",").map(t => t.trim()) : undefined,
+        notes: notes || undefined,
+        photos: treatment?.photos || [],
+      };
+      if (treatment) {
+        await updateTreatment(userId, treatment.id, data);
+        toast.success("Treatment updated");
+      } else {
+        await addTreatment(userId, data);
+        toast.success("Treatment added");
+      }
+      onSave();
+    } finally { setSaving(false); }
   };
 
   return (
