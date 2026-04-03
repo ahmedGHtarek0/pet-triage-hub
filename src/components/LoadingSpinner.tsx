@@ -1,0 +1,13 @@
+export default function LoadingSpinner() {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-muted" />
+          <div className="absolute inset-0 rounded-full border-4 border-t-primary animate-spin" />
+        </div>
+        <p className="text-muted-foreground font-medium animate-pulse">Loading Pet Planet...</p>
+      </div>
+    </div>
+  );
+}
