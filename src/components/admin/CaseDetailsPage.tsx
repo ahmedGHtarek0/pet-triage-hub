@@ -368,7 +368,7 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
   const [time, setTime] = useState(treatment?.time?.join(", ") || "");
   const [notes, setNotes] = useState(treatment?.notes || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) { toast.error("Date is required"); return; }
     const data: Treatment = {
@@ -381,10 +381,10 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
       photos: treatment?.photos || [],
     };
     if (treatment) {
-      updateTreatment(userId, treatment.id, data);
+      await updateTreatment(userId, treatment.id, data);
       toast.success("Treatment updated");
     } else {
-      addTreatment(userId, data);
+      await addTreatment(userId, data);
       toast.success("Treatment added");
     }
     onSave();
