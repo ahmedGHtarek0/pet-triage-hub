@@ -1,9 +1,13 @@
+import { useState, useEffect } from "react";
 import { Heart, Stethoscope, Syringe, Scissors, Phone, MapPin, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import Navbar from "@/components/Navbar";
+import { getSiteContent, type SiteContent } from "@/lib/data";
+
+const iconMap: Record<string, React.ElementType> = { Heart, Scissors, Syringe, Stethoscope };
 
 function Section({ id, children, className = "" }: { id: string; children: React.ReactNode; className?: string }) {
   const ref = useScrollReveal();
@@ -15,6 +19,14 @@ function Section({ id, children, className = "" }: { id: string; children: React
 }
 
 export default function HomePage() {
+  const [content, setContent] = useState<SiteContent>(getSiteContent());
+
+  // Re-read content periodically to reflect admin changes
+  useEffect(() => {
+    const interval = setInterval(() => setContent(getSiteContent()), 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -24,16 +36,16 @@ export default function HomePage() {
         <video
           autoPlay muted loop playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          src="/videos/hero-bg.mp4"
+          src={content.hero.videoUrl}
         />
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative z-10 text-center px-4 animate-fade-in-up">
           <img src="/images/logo.png" alt="Pet Planet" className="w-24 h-24 mx-auto mb-6 animate-float" />
           <h1 className="font-heading text-5xl md:text-7xl font-bold text-primary-foreground mb-4">
-            Pet Planet
+            {content.hero.title}
           </h1>
           <p className="font-heading text-xl md:text-2xl text-primary-foreground/80 mb-2">
-            Veterinary Clinic
+            {content.hero.subtitle}
           </p>
           <p className="text-primary-foreground/60 mb-8 max-w-md mx-auto">
             Professional veterinary care by Dr. Khaled Nasser. Your pets deserve the best.
@@ -64,14 +76,9 @@ export default function HomePage() {
               <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">
                 About <span className="gradient-text">Pet Planet</span>
               </h2>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
-                Welcome to Pet Planet Veterinary Clinic, led by Dr. Khaled Nasser. We provide comprehensive
-                veterinary services with state-of-the-art facilities and compassionate care for your beloved pets.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Our mission is to deliver exceptional medical care, from routine check-ups to complex surgical
-                procedures, ensuring every pet receives the attention and treatment they deserve.
-              </p>
+              <div className="text-muted-foreground leading-relaxed whitespace-pre-line mb-4">
+                {content.about.text}
+              </div>
               <div className="flex gap-6 mt-8">
                 <div className="text-center">
                   <p className="font-heading text-3xl font-bold text-primary"><AnimatedCounter end={350} suffix="+" /></p>
@@ -89,7 +96,11 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-2xl">
-                <img src="/images/doctor.jpg" alt="Dr. Khaled Nasser" className="w-full h-[500px] object-cover" />
+                <img
+                  src={content.about.images[0] || "/images/doctor.jpg"}
+                  alt="Dr. Khaled Nasser"
+                  className="w-full h-[500px] object-cover"
+                />
               </div>
               <div className="absolute -bottom-4 -left-4 glass-card p-4 flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
@@ -113,24 +124,25 @@ export default function HomePage() {
             <p className="text-muted-foreground max-w-lg mx-auto">Comprehensive veterinary care for your pets</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: Heart, title: "Treatment", desc: "Advanced medical treatment for all conditions including viral infections, chronic diseases, and emergency care.", img: "/images/service-treatment.jpg" },
-              { icon: Scissors, title: "Surgery", desc: "State-of-the-art surgical procedures from routine spaying/neutering to complex orthopedic operations.", img: "/images/service-surgery.jpg" },
-              { icon: Syringe, title: "Vaccination", desc: "Complete vaccination programs to protect your pets against common and dangerous diseases.", img: "/images/service-vaccination.jpg" },
-            ].map((s, i) => (
-              <div key={i} className="glass-card-hover overflow-hidden group">
-                <div className="h-48 overflow-hidden">
-                  <img src={s.img} alt={s.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                </div>
-                <div className="p-6">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 -mt-10 relative z-10 glass-card">
-                    <s.icon className="text-primary" size={24} />
+            {content.services.map((s, i) => {
+              const Icon = iconMap[s.icon] || Heart;
+              return (
+                <div key={i} className="glass-card-hover overflow-hidden group">
+                  {s.image && (
+                    <div className="h-48 overflow-hidden">
+                      <img src={s.image} alt={s.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className={`w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 ${s.image ? "-mt-10 relative z-10 glass-card" : ""}`}>
+                      <Icon className="text-primary" size={24} />
+                    </div>
+                    <h3 className="font-heading font-semibold text-xl mb-2">{s.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{s.description}</p>
                   </div>
-                  <h3 className="font-heading font-semibold text-xl mb-2">{s.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Section>
@@ -142,21 +154,15 @@ export default function HomePage() {
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Our <span className="gradient-text">Gallery</span></h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-              <img src="/images/gallery-1.jpg" alt="Happy pets" loading="lazy" className="w-full h-64 object-cover" />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-              <img src="/images/gallery-2.jpg" alt="Cat care" loading="lazy" className="w-full h-64 object-cover" />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-              <img src="/images/doctor.jpg" alt="Dr. Khaled" loading="lazy" className="w-full h-64 object-cover" />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow md:col-span-1">
-              <video src="/videos/gallery-1.mp4" controls muted className="w-full h-64 object-cover" />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow md:col-span-2">
-              <video src="/videos/gallery-2.mp4" controls muted className="w-full h-64 object-cover" />
-            </div>
+            {content.gallery.map((item, i) => (
+              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                {item.type === "image" ? (
+                  <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover" />
+                ) : (
+                  <video src={item.url} controls muted className="w-full h-64 object-cover" />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </Section>
