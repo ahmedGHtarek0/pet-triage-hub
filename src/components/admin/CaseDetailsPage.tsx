@@ -309,11 +309,11 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
                   <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
                       const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      updateUser(user.id, { photos });
-                      onRefresh();
+                      await updateUser(user.id, { photos });
+                      await onRefresh();
                       toast.success("Media deleted");
                     }}
                     className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
