@@ -322,21 +322,23 @@ export default function UserDashboard() {
                     <p className="text-muted-foreground text-sm">Your doctor will upload photos here</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {user.photos?.map((photo, i) => (
-                      <div key={i} className="rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
-                        <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {user.photos?.map((photo, i) => (
+                        <div key={i} className="rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
+                          <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
+                        </div>
+                      ))}
+                    </div>
 
-                  {lightboxIndex !== null && user.photos && (
-                    <PhotoLightbox
-                      photos={user.photos}
-                      initialIndex={lightboxIndex}
-                      onClose={() => setLightboxIndex(null)}
-                    />
-                  )}
+                    {lightboxIndex !== null && user.photos && (
+                      <PhotoLightbox
+                        photos={user.photos}
+                        initialIndex={lightboxIndex}
+                        onClose={() => setLightboxIndex(null)}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             )}
