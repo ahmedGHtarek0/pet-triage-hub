@@ -306,12 +306,12 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {user.photos?.map((photo, i) => (
-                <div key={i} className="relative group rounded-xl overflow-hidden">
-                  <img src={photo} alt="" className="w-full h-40 object-cover" />
+                <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
+                  <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      updateUser(user.id, { photos });
                       updateUser(user.id, { photos });
                       onRefresh();
                       toast.success("Media deleted");
