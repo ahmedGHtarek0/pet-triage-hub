@@ -216,6 +216,7 @@ export default function HomePage() {
               referrerPolicy="no-referrer-when-downgrade"
               title="Pet Planet Clinic Location"
             />
+          </div>
         </div>
       </Section>
 
