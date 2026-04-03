@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, Image, Trash2, Plus, X, Save } from "lucide-react";
+import { Globe, Image, Trash2, Plus, X, Save, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getSiteContent, saveSiteContent, type SiteContent } from "@/lib/data";
