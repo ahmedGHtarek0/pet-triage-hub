@@ -45,7 +45,14 @@ export default function HomePage() {
       {/* Hero */}
       <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
         {content.hero.videoUrl && (
-          /youtube\.com|youtu\.be|facebook\.com|fb\.watch|vimeo\.com/.test(content.hero.videoUrl) ? (
+          /\.(mp4|webm|ogg)(\?|$)/i.test(content.hero.videoUrl) ? (
+            <video
+              autoPlay muted loop playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              src={content.hero.videoUrl}
+              onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
+            />
+          ) : (
             <iframe
               src={
                 content.hero.videoUrl.includes("youtube.com/watch")
@@ -61,13 +68,6 @@ export default function HomePage() {
               className="absolute inset-0 w-full h-full object-cover border-0 pointer-events-none scale-150"
               allow="autoplay; fullscreen"
               title="Hero background"
-            />
-          ) : (
-            <video
-              autoPlay muted loop playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-              src={content.hero.videoUrl}
-              onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
             />
           )
         )}
