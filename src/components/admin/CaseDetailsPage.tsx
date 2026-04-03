@@ -261,10 +261,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={async () => { await deleteVitalSign(user.id, v.id); await onRefresh(); toast.success("Vital sign deleted"); }}
-                            className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
+                            onClick={async () => {
+                              setDeletingVitalId(v.id);
+                              try { await deleteVitalSign(user.id, v.id); await onRefresh(); toast.success("Vital sign deleted"); }
+                              finally { setDeletingVitalId(null); }
+                            }}
+                            disabled={deletingVitalId === v.id}
+                            className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors disabled:opacity-50"
                           >
-                            <Trash2 size={14} />
+                            {deletingVitalId === v.id ? <div className="w-3.5 h-3.5 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" /> : <Trash2 size={14} />}
                           </button>
                         </div>
                       </td>
