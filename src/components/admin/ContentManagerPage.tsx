@@ -16,6 +16,7 @@ export default function ContentManagerPage() {
   const [content, setContent] = useState<SiteContent>(defaultContent);
   const [activeTab, setActiveTab] = useState<"hero" | "about" | "services" | "gallery">("hero");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     getSiteContent().then((c) => {
