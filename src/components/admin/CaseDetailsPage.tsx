@@ -30,6 +30,10 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
   const [showVitalForm, setShowVitalForm] = useState(false);
   const [editingVital, setEditingVital] = useState<VitalSign | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [deletingTreatmentId, setDeletingTreatmentId] = useState<string | null>(null);
+  const [deletingVitalId, setDeletingVitalId] = useState<string | null>(null);
+  const [deletingPhotoIdx, setDeletingPhotoIdx] = useState<number | null>(null);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
 
   const tabs = [
     { id: "overview" as const, label: "Overview" },
