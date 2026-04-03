@@ -1,32 +1,49 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Phone, ArrowRight, Shield } from "lucide-react";
+import { Phone, ArrowRight, Shield, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/auth";
-import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone.trim()) {
-      toast.error("Please enter a phone number");
+    if (!phone.trim() || loading) return;
+
+    // Basic validation
+    if (phone.trim().length < 5) {
+      setStatus("error");
+      setMessage("Please enter a valid phone number");
       return;
     }
+
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    setStatus("idle");
+    setMessage("");
+
+    await new Promise((r) => setTimeout(r, 1500));
+
     const result = login(phone.trim());
     setLoading(false);
+
     if (result.success) {
-      toast.success(`Welcome! Redirecting to ${result.role} dashboard...`);
-      setTimeout(() => navigate(result.role === "admin" ? "/admin" : "/dashboard"), 500);
+      setStatus("success");
+      setMessage(
+        result.role === "admin"
+          ? "Welcome back, Dr. Khaled! Redirecting..."
+          : "Welcome! Loading your dashboard..."
+      );
+      setTimeout(() => navigate(result.role === "admin" ? "/admin" : "/dashboard"), 1200);
     } else {
-      toast.error(result.error || "Login failed");
+      setStatus("error");
+      setMessage("This phone number is not registered in our system");
     }
   };
 
@@ -42,6 +59,7 @@ export default function LoginPage() {
             <h1 className="font-heading text-2xl font-bold mb-2">Welcome Back</h1>
             <p className="text-muted-foreground text-sm">Login with your phone number</p>
           </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -49,18 +67,66 @@ export default function LoginPage() {
                 type="text"
                 placeholder="Enter phone number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="pl-10"
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (status !== "idle") {
+                    setStatus("idle");
+                    setMessage("");
+                  }
+                }}
+                disabled={loading || status === "success"}
+                className={`pl-10 transition-all duration-300 ${
+                  status === "error"
+                    ? "border-destructive ring-2 ring-destructive/20"
+                    : status === "success"
+                    ? "border-primary ring-2 ring-primary/20"
+                    : ""
+                }`}
               />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Logging in...
+              {status !== "idle" && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 animate-scale-in">
+                  {status === "success" ? (
+                    <CheckCircle className="text-primary" size={18} />
+                  ) : (
+                    <XCircle className="text-destructive" size={18} />
+                  )}
                 </div>
+              )}
+            </div>
+
+            {/* Status Message */}
+            {message && (
+              <div
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm animate-fade-in ${
+                  status === "success"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "bg-destructive/10 text-destructive border border-destructive/20"
+                }`}
+              >
+                {status === "success" ? <CheckCircle size={16} /> : <XCircle size={16} />}
+                {message}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full relative overflow-hidden"
+              disabled={loading || status === "success"}
+            >
+              {loading ? (
+                <span className="flex items-center gap-2 animate-fade-in">
+                  <Loader2 size={18} className="animate-spin" />
+                  Verifying...
+                </span>
+              ) : status === "success" ? (
+                <span className="flex items-center gap-2 animate-fade-in">
+                  <CheckCircle size={18} />
+                  Redirecting...
+                </span>
               ) : (
-                <span className="flex items-center gap-2">Login <ArrowRight size={18} /></span>
+                <span className="flex items-center gap-2">
+                  Login <ArrowRight size={18} />
+                </span>
               )}
             </Button>
           </form>
