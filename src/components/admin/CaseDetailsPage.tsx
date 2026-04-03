@@ -442,7 +442,7 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
   const [stool, setStool] = useState(vital?.stool || "");
   const [notes, setNotes] = useState(vital?.notes || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !time) { toast.error("Date and time are required"); return; }
     const data: VitalSign = {
@@ -450,10 +450,10 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
       date, time, temp, food, drink, urine, stool, notes,
     };
     if (vital) {
-      updateVitalSign(userId, vital.id, data);
+      await updateVitalSign(userId, vital.id, data);
       toast.success("Vital sign updated");
     } else {
-      addVitalSign(userId, data);
+      await addVitalSign(userId, data);
       toast.success("Vital sign added");
     }
     onSave();
