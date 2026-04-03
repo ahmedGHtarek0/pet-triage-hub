@@ -120,10 +120,16 @@ const defaultUsers: UserRecord[] = [
 ];
 
 const STORAGE_KEY = "petplanet_users";
+const STORAGE_VERSION = "v2"; // Bump to force reset old data
 const ACTIVITY_KEY = "petplanet_activity";
 const CONTENT_KEY = "petplanet_content";
 
 export function getUsers(): UserRecord[] {
+  const version = localStorage.getItem("petplanet_version");
+  if (version !== STORAGE_VERSION) {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.setItem("petplanet_version", STORAGE_VERSION);
+  }
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) return JSON.parse(stored);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));

@@ -189,10 +189,10 @@ export default function HomePage() {
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Contact <span className="gradient-text">Us</span></h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <a href="tel:+201124783322" className="glass-card-hover p-8 text-center">
+            <a href="tel:+201151121767" className="glass-card-hover p-8 text-center">
               <Phone className="mx-auto mb-4 text-primary" size={32} />
               <h3 className="font-heading font-semibold mb-2">Phone</h3>
-              <p className="text-muted-foreground text-sm">01124783322</p>
+              <p className="text-muted-foreground text-sm">01151121767</p>
             </a>
             <a href="https://www.facebook.com/people/Pet-planet-clinic/61551599002613/" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center">
               <Facebook className="mx-auto mb-4 text-primary" size={32} />
