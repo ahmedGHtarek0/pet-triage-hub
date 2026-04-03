@@ -1,17 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Globe, Image, Trash2, Plus, X, Save, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getSiteContent, saveSiteContent, type SiteContent } from "@/lib/data";
 import { toast } from "sonner";
 
-export default function ContentManagerPage() {
-  const [content, setContent] = useState<SiteContent>(getSiteContent());
-  const [activeTab, setActiveTab] = useState<"hero" | "about" | "services" | "gallery">("hero");
+const defaultContent: SiteContent = {
+  hero: { title: "Pet Planet", subtitle: "Veterinary Clinic", videoUrl: "/videos/hero-bg.mp4" },
+  about: { text: "", images: ["/images/doctor.jpg"] },
+  services: [],
+  gallery: [],
+};
 
-  const save = (updated: SiteContent) => {
+export default function ContentManagerPage() {
+  const [content, setContent] = useState<SiteContent>(defaultContent);
+  const [activeTab, setActiveTab] = useState<"hero" | "about" | "services" | "gallery">("hero");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getSiteContent().then((c) => {
+      setContent(c);
+      setLoading(false);
+    });
+  }, []);
+
+  const save = async (updated: SiteContent) => {
     setContent(updated);
-    saveSiteContent(updated);
+    await saveSiteContent(updated);
     toast.success("Content saved");
   };
 
@@ -21,6 +36,14 @@ export default function ContentManagerPage() {
     { id: "services" as const, label: "Services" },
     { id: "gallery" as const, label: "Gallery" },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

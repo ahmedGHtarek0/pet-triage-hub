@@ -22,22 +22,22 @@ export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState<"overview" | "treatment" | "vitals" | "media">("overview");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  useEffect(() => {
+  const loadUser = async () => {
     const auth = getAuth();
     if (auth.role !== "user") { navigate("/login"); return; }
-    setTimeout(() => {
-      const u = getUserByPhone(auth.phone);
-      setUser(u || null);
-      setLoading(false);
-    }, 600);
-  }, [navigate]);
+    const u = await getUserByPhone(auth.phone);
+    setUser(u || null);
+    setLoading(false);
+  };
 
-  // Re-read user data periodically to see admin updates
+  useEffect(() => { loadUser(); }, [navigate]);
+
+  // Re-read user data periodically
   useEffect(() => {
     if (!user) return;
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       const auth = getAuth();
-      const u = getUserByPhone(auth.phone);
+      const u = await getUserByPhone(auth.phone);
       if (u) setUser(u);
     }, 5000);
     return () => clearInterval(interval);
@@ -77,7 +77,6 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
@@ -93,7 +92,6 @@ export default function UserDashboard() {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {view === "dashboard" && (
           <div className="space-y-6 animate-fade-in">
-            {/* Pet Profile Cards */}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="glass-card p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -130,7 +128,6 @@ export default function UserDashboard() {
               </div>
             </div>
 
-            {/* Case Summary - Clickable */}
             <button
               onClick={() => setView("case-details")}
               className="glass-card p-6 w-full text-left hover:border-primary/30 transition-all group"
@@ -154,7 +151,6 @@ export default function UserDashboard() {
               </div>
             </button>
 
-            {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4">
               <div className="glass-card p-4 text-center">
                 <Activity className="mx-auto mb-2 text-primary" size={20} />
@@ -190,7 +186,6 @@ export default function UserDashboard() {
               <StatusBadge status={user.status} />
             </div>
 
-            {/* Tabs */}
             <div className="flex gap-1 bg-muted rounded-xl p-1">
               {tabs.map((tab) => (
                 <button
@@ -245,7 +240,7 @@ export default function UserDashboard() {
                           <span className="font-heading font-semibold text-sm">{t.date}</span>
                           {t.staff && <span className="text-xs text-muted-foreground">• {t.staff}</span>}
                         </div>
-                        {t.drugs && (
+                        {t.drugs && t.drugs.length > 0 && (
                           <div className="flex items-start gap-2 mb-2">
                             <Pill className="text-primary mt-0.5" size={14} />
                             <div className="flex flex-wrap gap-1.5">
@@ -255,7 +250,7 @@ export default function UserDashboard() {
                             </div>
                           </div>
                         )}
-                        {t.time && (
+                        {t.time && t.time.length > 0 && (
                           <div className="flex items-center gap-2">
                             <Clock className="text-muted-foreground" size={14} />
                             <span className="text-xs text-muted-foreground">{t.time.join(", ")}</span>

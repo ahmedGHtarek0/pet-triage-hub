@@ -1,12 +1,33 @@
+import { useState, useEffect } from "react";
 import { Clock, ArrowRight } from "lucide-react";
-import { getActivities, getUserById, type UserRecord } from "@/lib/data";
+import { getActivities, getUserById, type UserRecord, type ActivityLog } from "@/lib/data";
 
 interface Props {
   onViewUser: (user: UserRecord) => void;
 }
 
 export default function RecentActivityPage({ onViewUser }: Props) {
-  const activities = getActivities();
+  const [activities, setActivities] = useState<ActivityLog[]>([]);
+  const [userCache, setUserCache] = useState<Record<string, UserRecord>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      const acts = await getActivities();
+      setActivities(acts);
+
+      // Load users for activities
+      const uniqueIds = [...new Set(acts.map(a => a.userId).filter(Boolean))];
+      const cache: Record<string, UserRecord> = {};
+      await Promise.all(uniqueIds.map(async (id) => {
+        const user = await getUserById(id);
+        if (user) cache[id] = user;
+      }));
+      setUserCache(cache);
+      setLoading(false);
+    };
+    load();
+  }, []);
 
   const formatTime = (ts: string) => {
     const d = new Date(ts);
@@ -17,6 +38,20 @@ export default function RecentActivityPage({ onViewUser }: Props) {
     if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
     return d.toLocaleDateString();
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="font-heading text-2xl font-bold">Recent Activity</h1>
+          <p className="text-muted-foreground text-sm mt-1">Loading...</p>
+        </div>
+        <div className="flex justify-center py-12">
+          <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -36,7 +71,7 @@ export default function RecentActivityPage({ onViewUser }: Props) {
           <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border" />
           <div className="space-y-4">
             {activities.map((a) => {
-              const user = getUserById(a.userId);
+              const user = userCache[a.userId];
               return (
                 <div key={a.id} className="relative pl-16">
                   <div className="absolute left-4 top-4 w-4 h-4 rounded-full bg-primary border-4 border-card" />
