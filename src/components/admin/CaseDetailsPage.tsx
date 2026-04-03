@@ -197,7 +197,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                           <Edit size={14} />
                         </button>
                         <button
-                          onClick={() => { deleteTreatment(user.id, t.id); onRefresh(); toast.success("Treatment deleted"); }}
+                          onClick={async () => { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }}
                           className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
                         >
                           <Trash2 size={14} />
