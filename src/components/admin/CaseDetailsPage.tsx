@@ -201,10 +201,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                           <Edit size={14} />
                         </button>
                         <button
-                          onClick={async () => { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }}
-                          className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
+                          onClick={async () => {
+                            setDeletingTreatmentId(t.id);
+                            try { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }
+                            finally { setDeletingTreatmentId(null); }
+                          }}
+                          disabled={deletingTreatmentId === t.id}
+                          className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors disabled:opacity-50"
                         >
-                          <Trash2 size={14} />
+                          {deletingTreatmentId === t.id ? <div className="w-3.5 h-3.5 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" /> : <Trash2 size={14} />}
                         </button>
                       </div>
                     </div>
