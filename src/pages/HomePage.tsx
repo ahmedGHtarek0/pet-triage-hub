@@ -194,22 +194,28 @@ export default function HomePage() {
               <h3 className="font-heading font-semibold mb-2">Phone</h3>
               <p className="text-muted-foreground text-sm">01124783322</p>
             </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center">
+            <a href="https://www.facebook.com/people/Pet-planet-clinic/61551599002613/" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center">
               <Facebook className="mx-auto mb-4 text-primary" size={32} />
               <h3 className="font-heading font-semibold mb-2">Facebook</h3>
               <p className="text-muted-foreground text-sm">Pet Planet Clinic</p>
             </a>
-            <div className="glass-card-hover p-8 text-center">
+            <a href="https://www.google.com/maps?q=24.062134636139163,32.88546865767205" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center">
               <MapPin className="mx-auto mb-4 text-primary" size={32} />
               <h3 className="font-heading font-semibold mb-2">Address</h3>
               <p className="text-muted-foreground text-sm">Pet Planet Veterinary Clinic</p>
-            </div>
+            </a>
           </div>
-          <div className="mt-12 rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto h-64 bg-muted flex items-center justify-center">
-            <div className="text-center text-muted-foreground">
-              <MapPin size={48} className="mx-auto mb-2 opacity-50" />
-              <p>Map placeholder</p>
-            </div>
+          <div className="mt-12 rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto h-64">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d1000!2d32.88546865767205!3d24.062134636139163!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjTCsDAzJzQzLjciTiAzMsKwNTMnMDcuNyJF!5e0!3m2!1sen!2seg!4v1700000000000"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Pet Planet Clinic Location"
+            />
           </div>
         </div>
       </Section>
