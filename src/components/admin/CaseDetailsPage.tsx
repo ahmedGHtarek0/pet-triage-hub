@@ -329,18 +329,22 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
               {user.photos?.map((photo, i) => (
                 <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
                   <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      await updateUser(user.id, { photos });
-                      await onRefresh();
-                      toast.success("Media deleted");
-                    }}
-                    className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                    <button
+                     onClick={async (e) => {
+                       e.stopPropagation();
+                       setDeletingPhotoIdx(i);
+                       try {
+                         const photos = (user.photos || []).filter((_, idx) => idx !== i);
+                         await updateUser(user.id, { photos });
+                         await onRefresh();
+                         toast.success("Media deleted");
+                       } finally { setDeletingPhotoIdx(null); }
+                     }}
+                     disabled={deletingPhotoIdx === i}
+                     className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+                   >
+                     {deletingPhotoIdx === i ? <div className="w-3.5 h-3.5 border-2 border-destructive-foreground/30 border-t-destructive-foreground rounded-full animate-spin" /> : <Trash2 size={14} />}
+                   </button>
                 </div>
               ))}
             </div>
