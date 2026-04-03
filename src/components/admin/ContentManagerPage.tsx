@@ -27,8 +27,9 @@ export default function ContentManagerPage() {
 
   const save = async (updated: SiteContent) => {
     setContent(updated);
-    await saveSiteContent(updated);
-    toast.success("Content saved");
+    setSaving(true);
+    try { await saveSiteContent(updated); toast.success("Content saved"); }
+    finally { setSaving(false); }
   };
 
   const tabs = [
