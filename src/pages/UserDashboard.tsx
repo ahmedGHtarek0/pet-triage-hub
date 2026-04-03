@@ -10,6 +10,7 @@ import {
   Calendar, Pill, Clock, Thermometer, FileText,
   ChevronRight, Image,
 } from "lucide-react";
+import PhotoLightbox from "@/components/PhotoLightbox";
 
 type ViewLevel = "dashboard" | "case-details";
 
