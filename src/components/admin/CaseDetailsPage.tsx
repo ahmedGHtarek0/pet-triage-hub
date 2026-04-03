@@ -285,7 +285,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
       {activeTab === "media" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={() => {
+            <Button disabled={uploadingMedia} onClick={() => {
               const input = document.createElement("input");
               input.type = "file";
               input.accept = "image/*,video/*";
@@ -293,21 +293,28 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
               input.onchange = (e) => {
                 const files = (e.target as HTMLInputElement).files;
                 if (!files) return;
+                setUploadingMedia(true);
+                let remaining = files.length;
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
                   reader.onload = async () => {
                     const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
                     await updateUser(user.id, { photos });
-                    await onRefresh();
-                    toast.success("Media uploaded");
+                    remaining--;
+                    if (remaining === 0) {
+                      await onRefresh();
+                      setUploadingMedia(false);
+                      toast.success("Media uploaded");
+                    }
                   };
                   reader.readAsDataURL(file);
                 });
               };
               input.click();
             }}>
-              <Image size={16} className="mr-2" /> Upload Media
+              {uploadingMedia ? <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" /> : <Image size={16} className="mr-2" />}
+              {uploadingMedia ? "Uploading..." : "Upload Media"}
             </Button>
           </div>
 
