@@ -3,6 +3,7 @@ import {
   Stethoscope, Calendar, Pill, Clock, FileText, Thermometer,
   Plus, Edit, Trash2, X, Image,
 } from "lucide-react";
+import PhotoLightbox from "@/components/PhotoLightbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import StatusBadge from "@/components/StatusBadge";
@@ -28,6 +29,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
   const [editingTreatment, setEditingTreatment] = useState<Treatment | null>(null);
   const [showVitalForm, setShowVitalForm] = useState(false);
   const [editingVital, setEditingVital] = useState<VitalSign | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const tabs = [
     { id: "overview" as const, label: "Overview" },
@@ -280,9 +282,8 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
                   reader.onload = () => {
-                    const photos = user.photos || [];
+                    const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
-                    updateUser(user.id, { photos });
                     updateUser(user.id, { photos });
                     onRefresh();
                     toast.success("Media uploaded");
@@ -305,12 +306,12 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {user.photos?.map((photo, i) => (
-                <div key={i} className="relative group rounded-xl overflow-hidden">
-                  <img src={photo} alt="" className="w-full h-40 object-cover" />
+                <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
+                  <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      updateUser(user.id, { photos });
                       updateUser(user.id, { photos });
                       onRefresh();
                       toast.success("Media deleted");
@@ -324,6 +325,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
             </div>
           )}
         </div>
+      )}
+
+      {/* Photo Lightbox */}
+      {lightboxIndex !== null && user.photos && user.photos.length > 0 && (
+        <PhotoLightbox
+          photos={user.photos}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
       )}
 
       {/* Treatment Form Modal */}

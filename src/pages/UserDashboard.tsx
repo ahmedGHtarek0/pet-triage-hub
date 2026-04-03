@@ -10,6 +10,7 @@ import {
   Calendar, Pill, Clock, Thermometer, FileText,
   ChevronRight, Image,
 } from "lucide-react";
+import PhotoLightbox from "@/components/PhotoLightbox";
 
 type ViewLevel = "dashboard" | "case-details";
 
@@ -19,6 +20,7 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewLevel>("dashboard");
   const [activeTab, setActiveTab] = useState<"overview" | "treatment" | "vitals" | "media">("overview");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -320,13 +322,23 @@ export default function UserDashboard() {
                     <p className="text-muted-foreground text-sm">Your doctor will upload photos here</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {user.photos?.map((photo, i) => (
-                      <div key={i} className="rounded-xl overflow-hidden">
-                        <img src={photo} alt="" className="w-full h-40 object-cover" />
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {user.photos?.map((photo, i) => (
+                        <div key={i} className="rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
+                          <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {lightboxIndex !== null && user.photos && (
+                      <PhotoLightbox
+                        photos={user.photos}
+                        initialIndex={lightboxIndex}
+                        onClose={() => setLightboxIndex(null)}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             )}

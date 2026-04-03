@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Search, Plus, Eye, Edit, Trash2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,44 @@ interface Props {
   onRefresh: () => void;
   onViewUser: (user: UserRecord) => void;
   onEditUser: (user: UserRecord | null) => void;
+}
+
+function StatusDropdown({ status, onChange }: { status: CaseStatus; onChange: (s: CaseStatus) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        className="flex items-center gap-1"
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+      >
+        <StatusBadge status={status} />
+        <ChevronDown size={14} className="text-muted-foreground" />
+      </button>
+      {open && (
+        <div className="absolute top-full right-0 mt-1 bg-card border border-border rounded-lg shadow-xl py-1 z-20 min-w-[140px]">
+          {(["Improving", "Stable", "Critical", "Euthanized"] as CaseStatus[]).map((s) => (
+            <button
+              key={s}
+              onClick={(e) => { e.stopPropagation(); onChange(s); setOpen(false); }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function UserListPage({ users, onRefresh, onViewUser, onEditUser }: Props) {
@@ -94,23 +132,10 @@ export default function UserListPage({ users, onRefresh, onViewUser, onEditUser 
                   <p className="text-sm">{u.animal.species} • {u.animal.sex}</p>
                   <p className="text-xs text-muted-foreground">{u.animal.diagnosis}</p>
                 </div>
-                <div className="relative group">
-                  <button className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    <StatusBadge status={u.status} />
-                    <ChevronDown size={14} className="text-muted-foreground" />
-                  </button>
-                  <div className="absolute top-full right-0 mt-1 bg-card border border-border rounded-lg shadow-xl py-1 z-10 hidden group-hover:block min-w-[140px]">
-                    {(["Improving", "Stable", "Critical", "Euthanized"] as CaseStatus[]).map((s) => (
-                      <button
-                        key={s}
-                        onClick={(e) => { e.stopPropagation(); handleStatusUpdate(u.id, s); }}
-                        className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <StatusDropdown
+                  status={u.status}
+                  onChange={(s) => handleStatusUpdate(u.id, s)}
+                />
                 <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => onEditUser(u)} className="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors">
                     <Edit size={16} />
