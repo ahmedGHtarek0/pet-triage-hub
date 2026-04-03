@@ -1,4 +1,5 @@
-import { ADMIN_PHONE, getUserByPhone } from "./data";
+import { ADMIN_PHONE } from "./data";
+import { supabase } from "@/integrations/supabase/client";
 
 const AUTH_KEY = "petplanet_auth";
 
@@ -9,16 +10,24 @@ export interface AuthState {
   phone: string;
 }
 
-export function login(phone: string): { success: boolean; role: AuthRole; error?: string } {
+export async function login(phone: string): Promise<{ success: boolean; role: AuthRole; error?: string }> {
   if (phone === ADMIN_PHONE) {
     localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "admin", phone }));
     return { success: true, role: "admin" };
   }
-  const user = getUserByPhone(phone);
-  if (user) {
+
+  // Check database for user
+  const { data } = await supabase
+    .from("patients")
+    .select("id")
+    .eq("owner_phone", phone)
+    .maybeSingle();
+
+  if (data) {
     localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "user", phone }));
     return { success: true, role: "user" };
   }
+
   return { success: false, role: null, error: "Phone number not found" };
 }
 
