@@ -63,15 +63,15 @@ export default function UserListPage({ users, onRefresh, onViewUser, onEditUser 
       u.owner.phone.includes(search)
     );
 
-  const handleDelete = (id: string) => {
-    deleteUser(id);
-    onRefresh();
+  const handleDelete = async (id: string) => {
+    await deleteUser(id);
+    await onRefresh();
     toast.success("User deleted successfully");
   };
 
-  const handleStatusUpdate = (id: string, status: CaseStatus) => {
-    updateUser(id, { status });
-    onRefresh();
+  const handleStatusUpdate = async (id: string, status: CaseStatus) => {
+    await updateUser(id, { status });
+    await onRefresh();
     toast.success(`Status updated to ${status}`);
   };
 
