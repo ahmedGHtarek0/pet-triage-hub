@@ -25,9 +25,12 @@ export default function UserFormModal({ user, onClose, onSave }: Props) {
   const [subType, setSubType] = useState(user?.medicalCase.subType.join(", ") || "");
   const [status, setStatus] = useState<CaseStatus>(user?.status || "Stable");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) { toast.error("Name and phone are required"); return; }
+    setSaving(true);
     const record: UserRecord = {
       id: user?.id || Date.now().toString(),
       owner: { name, phone, id: ownerId },
@@ -43,12 +46,13 @@ export default function UserFormModal({ user, onClose, onSave }: Props) {
       photos: user?.photos || [],
     };
     if (user) {
-      updateUser(user.id, record);
+      await updateUser(user.id, record);
       toast.success("User updated");
     } else {
-      addUser(record);
+      await addUser(record);
       toast.success("User added");
     }
+    setSaving(false);
     onSave();
   };
 

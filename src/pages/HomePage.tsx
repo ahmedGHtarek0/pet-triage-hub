@@ -19,13 +19,24 @@ function Section({ id, children, className = "" }: { id: string; children: React
 }
 
 export default function HomePage() {
-  const [content, setContent] = useState<SiteContent>(getSiteContent());
+  const [content, setContent] = useState<SiteContent | null>(null);
 
-  // Re-read content periodically to reflect admin changes
   useEffect(() => {
-    const interval = setInterval(() => setContent(getSiteContent()), 3000);
+    getSiteContent().then(setContent);
+    const interval = setInterval(async () => {
+      const c = await getSiteContent();
+      setContent(c);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  if (!content) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">

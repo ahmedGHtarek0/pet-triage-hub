@@ -30,10 +30,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     const auth = getAuth();
     if (auth.role !== "admin") { navigate("/login"); return; }
-    setTimeout(() => { setUsers(getUsers()); setLoading(false); }, 600);
+    refresh().then(() => setLoading(false));
   }, [navigate]);
 
-  const refresh = () => setUsers(getUsers());
+  const refresh = async () => {
+    const data = await getUsers();
+    setUsers(data);
+  };
 
   const handleLogout = () => { logout(); navigate("/"); };
 
@@ -55,7 +58,16 @@ export default function AdminDashboard() {
     return view.from;
   };
 
-  const getUser = (id: string) => users.find(u => u.id === id) || getUserById(id);
+  const getUser = (id: string) => users.find(u => u.id === id);
+
+  // Reload user data when navigating to user views
+  const getRefreshedUser = async (id: string): Promise<UserRecord | undefined> => {
+    const fresh = await getUserById(id);
+    if (fresh) {
+      setUsers(prev => prev.map(u => u.id === id ? fresh : u));
+    }
+    return fresh;
+  };
 
   if (loading) {
     return (
@@ -86,7 +98,10 @@ export default function AdminDashboard() {
           user={user}
           onBackToUsers={() => setView({ level: "page", page: view.from })}
           onBackToUser={() => setView({ level: "user-overview", userId: view.userId, from: view.from })}
-          onRefresh={refresh}
+          onRefresh={async () => {
+            await getRefreshedUser(view.userId);
+            await refresh();
+          }}
         />
       );
     }
@@ -114,7 +129,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
@@ -128,12 +142,10 @@ export default function AdminDashboard() {
       </header>
 
       <div className="flex">
-        {/* Sidebar - Desktop */}
         <div className="hidden lg:block">
           <AdminSidebar current={currentPage()} onNavigate={handleNavigate} onLogout={handleLogout} />
         </div>
 
-        {/* Sidebar - Mobile overlay */}
         {sidebarOpen && (
           <div className="fixed inset-0 z-30 lg:hidden">
             <div className="absolute inset-0 bg-foreground/30" onClick={() => setSidebarOpen(false)} />
@@ -143,18 +155,16 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Main Content */}
         <main className="flex-1 p-6 lg:p-8 min-h-[calc(100vh-4rem)]">
           {renderContent()}
         </main>
       </div>
 
-      {/* User Form Modal */}
       {showForm && (
         <UserFormModal
           user={editingUser}
           onClose={() => { setShowForm(false); setEditingUser(null); }}
-          onSave={() => { refresh(); setShowForm(false); setEditingUser(null); }}
+          onSave={async () => { await refresh(); setShowForm(false); setEditingUser(null); }}
         />
       )}
     </div>

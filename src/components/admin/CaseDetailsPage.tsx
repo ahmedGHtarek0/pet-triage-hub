@@ -197,7 +197,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                           <Edit size={14} />
                         </button>
                         <button
-                          onClick={() => { deleteTreatment(user.id, t.id); onRefresh(); toast.success("Treatment deleted"); }}
+                          onClick={async () => { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }}
                           className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
                         >
                           <Trash2 size={14} />
@@ -252,7 +252,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={() => { deleteVitalSign(user.id, v.id); onRefresh(); toast.success("Vital sign deleted"); }}
+                            onClick={async () => { await deleteVitalSign(user.id, v.id); await onRefresh(); toast.success("Vital sign deleted"); }}
                             className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
                           >
                             <Trash2 size={14} />
@@ -281,11 +281,11 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 if (!files) return;
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
-                  reader.onload = () => {
+                  reader.onload = async () => {
                     const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
-                    updateUser(user.id, { photos });
-                    onRefresh();
+                    await updateUser(user.id, { photos });
+                    await onRefresh();
                     toast.success("Media uploaded");
                   };
                   reader.readAsDataURL(file);
@@ -309,11 +309,11 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
                   <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
                       const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      updateUser(user.id, { photos });
-                      onRefresh();
+                      await updateUser(user.id, { photos });
+                      await onRefresh();
                       toast.success("Media deleted");
                     }}
                     className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
@@ -368,7 +368,7 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
   const [time, setTime] = useState(treatment?.time?.join(", ") || "");
   const [notes, setNotes] = useState(treatment?.notes || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) { toast.error("Date is required"); return; }
     const data: Treatment = {
@@ -381,10 +381,10 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
       photos: treatment?.photos || [],
     };
     if (treatment) {
-      updateTreatment(userId, treatment.id, data);
+      await updateTreatment(userId, treatment.id, data);
       toast.success("Treatment updated");
     } else {
-      addTreatment(userId, data);
+      await addTreatment(userId, data);
       toast.success("Treatment added");
     }
     onSave();
@@ -442,7 +442,7 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
   const [stool, setStool] = useState(vital?.stool || "");
   const [notes, setNotes] = useState(vital?.notes || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !time) { toast.error("Date and time are required"); return; }
     const data: VitalSign = {
@@ -450,10 +450,10 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
       date, time, temp, food, drink, urine, stool, notes,
     };
     if (vital) {
-      updateVitalSign(userId, vital.id, data);
+      await updateVitalSign(userId, vital.id, data);
       toast.success("Vital sign updated");
     } else {
-      addVitalSign(userId, data);
+      await addVitalSign(userId, data);
       toast.success("Vital sign added");
     }
     onSave();

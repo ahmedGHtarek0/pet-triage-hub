@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     await new Promise((r) => setTimeout(r, 1500));
 
-    const result = login(phone.trim());
+    const result = await login(phone.trim());
     setLoading(false);
 
     if (result.success) {
