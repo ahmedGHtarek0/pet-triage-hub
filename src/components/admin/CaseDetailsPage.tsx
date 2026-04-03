@@ -30,6 +30,10 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
   const [showVitalForm, setShowVitalForm] = useState(false);
   const [editingVital, setEditingVital] = useState<VitalSign | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [deletingTreatmentId, setDeletingTreatmentId] = useState<string | null>(null);
+  const [deletingVitalId, setDeletingVitalId] = useState<string | null>(null);
+  const [deletingPhotoIdx, setDeletingPhotoIdx] = useState<number | null>(null);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
 
   const tabs = [
     { id: "overview" as const, label: "Overview" },
@@ -197,10 +201,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                           <Edit size={14} />
                         </button>
                         <button
-                          onClick={async () => { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }}
-                          className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
+                          onClick={async () => {
+                            setDeletingTreatmentId(t.id);
+                            try { await deleteTreatment(user.id, t.id); await onRefresh(); toast.success("Treatment deleted"); }
+                            finally { setDeletingTreatmentId(null); }
+                          }}
+                          disabled={deletingTreatmentId === t.id}
+                          className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors disabled:opacity-50"
                         >
-                          <Trash2 size={14} />
+                          {deletingTreatmentId === t.id ? <div className="w-3.5 h-3.5 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" /> : <Trash2 size={14} />}
                         </button>
                       </div>
                     </div>
@@ -252,10 +261,15 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={async () => { await deleteVitalSign(user.id, v.id); await onRefresh(); toast.success("Vital sign deleted"); }}
-                            className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
+                            onClick={async () => {
+                              setDeletingVitalId(v.id);
+                              try { await deleteVitalSign(user.id, v.id); await onRefresh(); toast.success("Vital sign deleted"); }
+                              finally { setDeletingVitalId(null); }
+                            }}
+                            disabled={deletingVitalId === v.id}
+                            className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors disabled:opacity-50"
                           >
-                            <Trash2 size={14} />
+                            {deletingVitalId === v.id ? <div className="w-3.5 h-3.5 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" /> : <Trash2 size={14} />}
                           </button>
                         </div>
                       </td>
@@ -271,7 +285,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
       {activeTab === "media" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={() => {
+            <Button disabled={uploadingMedia} onClick={() => {
               const input = document.createElement("input");
               input.type = "file";
               input.accept = "image/*,video/*";
@@ -279,21 +293,28 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
               input.onchange = (e) => {
                 const files = (e.target as HTMLInputElement).files;
                 if (!files) return;
+                setUploadingMedia(true);
+                let remaining = files.length;
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
                   reader.onload = async () => {
                     const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
                     await updateUser(user.id, { photos });
-                    await onRefresh();
-                    toast.success("Media uploaded");
+                    remaining--;
+                    if (remaining === 0) {
+                      await onRefresh();
+                      setUploadingMedia(false);
+                      toast.success("Media uploaded");
+                    }
                   };
                   reader.readAsDataURL(file);
                 });
               };
               input.click();
             }}>
-              <Image size={16} className="mr-2" /> Upload Media
+              {uploadingMedia ? <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" /> : <Image size={16} className="mr-2" />}
+              {uploadingMedia ? "Uploading..." : "Upload Media"}
             </Button>
           </div>
 
@@ -308,18 +329,22 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
               {user.photos?.map((photo, i) => (
                 <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(i)}>
                   <img src={photo} alt="" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const photos = (user.photos || []).filter((_, idx) => idx !== i);
-                      await updateUser(user.id, { photos });
-                      await onRefresh();
-                      toast.success("Media deleted");
-                    }}
-                    className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                    <button
+                     onClick={async (e) => {
+                       e.stopPropagation();
+                       setDeletingPhotoIdx(i);
+                       try {
+                         const photos = (user.photos || []).filter((_, idx) => idx !== i);
+                         await updateUser(user.id, { photos });
+                         await onRefresh();
+                         toast.success("Media deleted");
+                       } finally { setDeletingPhotoIdx(null); }
+                     }}
+                     disabled={deletingPhotoIdx === i}
+                     className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+                   >
+                     {deletingPhotoIdx === i ? <div className="w-3.5 h-3.5 border-2 border-destructive-foreground/30 border-t-destructive-foreground rounded-full animate-spin" /> : <Trash2 size={14} />}
+                   </button>
                 </div>
               ))}
             </div>
@@ -367,27 +392,31 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
   const [drugs, setDrugs] = useState(treatment?.drugs?.join(", ") || "");
   const [time, setTime] = useState(treatment?.time?.join(", ") || "");
   const [notes, setNotes] = useState(treatment?.notes || "");
+  const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) { toast.error("Date is required"); return; }
-    const data: Treatment = {
-      id: treatment?.id || `t${Date.now()}`,
-      date,
-      staff: staff || undefined,
-      drugs: drugs ? drugs.split(",").map(d => d.trim()) : undefined,
-      time: time ? time.split(",").map(t => t.trim()) : undefined,
-      notes: notes || undefined,
-      photos: treatment?.photos || [],
-    };
-    if (treatment) {
-      await updateTreatment(userId, treatment.id, data);
-      toast.success("Treatment updated");
-    } else {
-      await addTreatment(userId, data);
-      toast.success("Treatment added");
-    }
-    onSave();
+    setSaving(true);
+    try {
+      const data: Treatment = {
+        id: treatment?.id || `t${Date.now()}`,
+        date,
+        staff: staff || undefined,
+        drugs: drugs ? drugs.split(",").map(d => d.trim()) : undefined,
+        time: time ? time.split(",").map(t => t.trim()) : undefined,
+        notes: notes || undefined,
+        photos: treatment?.photos || [],
+      };
+      if (treatment) {
+        await updateTreatment(userId, treatment.id, data);
+        toast.success("Treatment updated");
+      } else {
+        await addTreatment(userId, data);
+        toast.success("Treatment added");
+      }
+      onSave();
+    } finally { setSaving(false); }
   };
 
   return (
@@ -421,8 +450,10 @@ function TreatmentFormModal({ treatment, userId, onClose, onSave }: {
             <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1">{treatment ? "Update" : "Add"}</Button>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />{treatment ? "Updating..." : "Adding..."}</> : (treatment ? "Update" : "Add")}
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
           </div>
         </form>
       </div>
@@ -441,22 +472,26 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
   const [urine, setUrine] = useState(vital?.urine || "");
   const [stool, setStool] = useState(vital?.stool || "");
   const [notes, setNotes] = useState(vital?.notes || "");
+  const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !time) { toast.error("Date and time are required"); return; }
-    const data: VitalSign = {
-      id: vital?.id || `v${Date.now()}`,
-      date, time, temp, food, drink, urine, stool, notes,
-    };
-    if (vital) {
-      await updateVitalSign(userId, vital.id, data);
-      toast.success("Vital sign updated");
-    } else {
-      await addVitalSign(userId, data);
-      toast.success("Vital sign added");
-    }
-    onSave();
+    setSaving(true);
+    try {
+      const data: VitalSign = {
+        id: vital?.id || `v${Date.now()}`,
+        date, time, temp, food, drink, urine, stool, notes,
+      };
+      if (vital) {
+        await updateVitalSign(userId, vital.id, data);
+        toast.success("Vital sign updated");
+      } else {
+        await addVitalSign(userId, data);
+        toast.success("Vital sign added");
+      }
+      onSave();
+    } finally { setSaving(false); }
   };
 
   return (
@@ -506,8 +541,10 @@ function VitalFormModal({ vital, userId, onClose, onSave }: {
             <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1">{vital ? "Update" : "Add"}</Button>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />{vital ? "Updating..." : "Adding..."}</> : (vital ? "Update" : "Add")}
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
           </div>
         </form>
       </div>

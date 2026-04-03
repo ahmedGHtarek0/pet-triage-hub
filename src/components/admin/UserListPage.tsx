@@ -55,6 +55,8 @@ function StatusDropdown({ status, onChange }: { status: CaseStatus; onChange: (s
 export default function UserListPage({ users, onRefresh, onViewUser, onEditUser }: Props) {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [statusLoadingId, setStatusLoadingId] = useState<string | null>(null);
 
   const filtered = users
     .filter((u) => filterStatus === "all" || u.status === filterStatus)
@@ -64,15 +66,21 @@ export default function UserListPage({ users, onRefresh, onViewUser, onEditUser 
     );
 
   const handleDelete = async (id: string) => {
-    await deleteUser(id);
-    await onRefresh();
-    toast.success("User deleted successfully");
+    setLoadingId(id);
+    try {
+      await deleteUser(id);
+      await onRefresh();
+      toast.success("User deleted successfully");
+    } finally { setLoadingId(null); }
   };
 
   const handleStatusUpdate = async (id: string, status: CaseStatus) => {
-    await updateUser(id, { status });
-    await onRefresh();
-    toast.success(`Status updated to ${status}`);
+    setStatusLoadingId(id);
+    try {
+      await updateUser(id, { status });
+      await onRefresh();
+      toast.success(`Status updated to ${status}`);
+    } finally { setStatusLoadingId(null); }
   };
 
   return (
@@ -137,11 +145,11 @@ export default function UserListPage({ users, onRefresh, onViewUser, onEditUser 
                   onChange={(s) => handleStatusUpdate(u.id, s)}
                 />
                 <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => onEditUser(u)} className="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors">
+                  <button onClick={() => onEditUser(u)} className="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors" disabled={loadingId === u.id}>
                     <Edit size={16} />
                   </button>
-                  <button onClick={() => handleDelete(u.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
-                    <Trash2 size={16} />
+                  <button onClick={() => handleDelete(u.id)} disabled={loadingId === u.id} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors disabled:opacity-50">
+                    {loadingId === u.id ? <div className="w-4 h-4 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" /> : <Trash2 size={16} />}
                   </button>
                 </div>
               </div>

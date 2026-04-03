@@ -16,6 +16,7 @@ export default function ContentManagerPage() {
   const [content, setContent] = useState<SiteContent>(defaultContent);
   const [activeTab, setActiveTab] = useState<"hero" | "about" | "services" | "gallery">("hero");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     getSiteContent().then((c) => {
@@ -26,8 +27,9 @@ export default function ContentManagerPage() {
 
   const save = async (updated: SiteContent) => {
     setContent(updated);
-    await saveSiteContent(updated);
-    toast.success("Content saved");
+    setSaving(true);
+    try { await saveSiteContent(updated); toast.success("Content saved"); }
+    finally { setSaving(false); }
   };
 
   const tabs = [
@@ -90,8 +92,8 @@ export default function ContentManagerPage() {
               onChange={(e) => setContent({ ...content, hero: { ...content.hero, videoUrl: e.target.value } })}
             />
           </div>
-          <Button onClick={() => save(content)}>
-            <Save size={16} className="mr-2" /> Save Changes
+          <Button onClick={() => save(content)} disabled={saving}>
+            {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save Changes</>}
           </Button>
         </div>
       )}
@@ -107,8 +109,8 @@ export default function ContentManagerPage() {
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[120px]"
             />
           </div>
-          <Button onClick={() => save(content)}>
-            <Save size={16} className="mr-2" /> Save Changes
+          <Button onClick={() => save(content)} disabled={saving}>
+            {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save Changes</>}
           </Button>
         </div>
       )}
@@ -168,8 +170,8 @@ export default function ContentManagerPage() {
             >
               <Plus size={16} className="mr-2" /> Add Service
             </Button>
-            <Button onClick={() => save(content)}>
-              <Save size={16} className="mr-2" /> Save All
+            <Button onClick={() => save(content)} disabled={saving}>
+              {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save All</>}
             </Button>
           </div>
         </div>
