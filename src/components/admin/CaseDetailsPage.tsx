@@ -3,6 +3,7 @@ import {
   Stethoscope, Calendar, Pill, Clock, FileText, Thermometer,
   Plus, Edit, Trash2, X, Image,
 } from "lucide-react";
+import PhotoLightbox from "@/components/PhotoLightbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import StatusBadge from "@/components/StatusBadge";
