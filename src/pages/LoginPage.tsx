@@ -64,11 +64,6 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-          <div className="mt-6 p-4 rounded-lg bg-muted">
-            <p className="text-xs text-muted-foreground text-center">
-              <strong>Demo:</strong> Admin: 1730183313455233839 | User: 01124783322
-            </p>
-          </div>
         </div>
       </div>
     </div>
