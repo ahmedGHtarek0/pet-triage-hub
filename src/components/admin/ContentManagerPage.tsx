@@ -188,15 +188,39 @@ export default function ContentManagerPage() {
                 ) : (
                   <video src={item.url} className="w-full h-40 object-cover" controls muted />
                 )}
-                <button
-                  onClick={() => {
-                    const gallery = content.gallery.filter((_, idx) => idx !== i);
-                    save({ ...content, gallery });
-                  }}
-                  className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <Trash2 size={14} />
-                </button>
+                <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => {
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept = item.type === "video" ? "video/*" : "image/*";
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          const gallery = [...content.gallery];
+                          gallery[i] = { ...gallery[i], url: reader.result as string };
+                          save({ ...content, gallery });
+                        };
+                        reader.readAsDataURL(file);
+                      };
+                      input.click();
+                    }}
+                    className="p-1.5 bg-primary text-primary-foreground rounded-lg"
+                  >
+                    <Edit size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      const gallery = content.gallery.filter((_, idx) => idx !== i);
+                      save({ ...content, gallery });
+                    }}
+                    className="p-1.5 bg-destructive text-destructive-foreground rounded-lg"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
