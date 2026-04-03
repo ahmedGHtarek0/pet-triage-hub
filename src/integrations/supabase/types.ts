@@ -14,7 +14,217 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: string | null
+          id: string
+          patient_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          patient_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          patient_id?: string | null
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          animal_age: string | null
+          animal_diagnosis: string | null
+          animal_sex: string
+          animal_species: string
+          animal_weight: string | null
+          case_category: string | null
+          case_sub_type: string[] | null
+          case_type: string[] | null
+          created_at: string
+          id: string
+          owner_name: string
+          owner_national_id: string | null
+          owner_phone: string
+          photos: string[] | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          animal_age?: string | null
+          animal_diagnosis?: string | null
+          animal_sex?: string
+          animal_species?: string
+          animal_weight?: string | null
+          case_category?: string | null
+          case_sub_type?: string[] | null
+          case_type?: string[] | null
+          created_at?: string
+          id?: string
+          owner_name: string
+          owner_national_id?: string | null
+          owner_phone: string
+          photos?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          animal_age?: string | null
+          animal_diagnosis?: string | null
+          animal_sex?: string
+          animal_species?: string
+          animal_weight?: string | null
+          case_category?: string | null
+          case_sub_type?: string[] | null
+          case_type?: string[] | null
+          created_at?: string
+          id?: string
+          owner_name?: string
+          owner_national_id?: string | null
+          owner_phone?: string
+          photos?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          about_images: string[] | null
+          about_text: string
+          gallery: Json
+          hero_subtitle: string
+          hero_title: string
+          hero_video_url: string
+          id: string
+          services: Json
+          updated_at: string
+        }
+        Insert: {
+          about_images?: string[] | null
+          about_text?: string
+          gallery?: Json
+          hero_subtitle?: string
+          hero_title?: string
+          hero_video_url?: string
+          id?: string
+          services?: Json
+          updated_at?: string
+        }
+        Update: {
+          about_images?: string[] | null
+          about_text?: string
+          gallery?: Json
+          hero_subtitle?: string
+          hero_title?: string
+          hero_video_url?: string
+          id?: string
+          services?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      treatments: {
+        Row: {
+          created_at: string
+          date: string
+          drugs: string[] | null
+          id: string
+          notes: string | null
+          patient_id: string
+          photos: string[] | null
+          staff: string | null
+          times: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          drugs?: string[] | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          photos?: string[] | null
+          staff?: string | null
+          times?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          drugs?: string[] | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          photos?: string[] | null
+          staff?: string | null
+          times?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vital_signs: {
+        Row: {
+          created_at: string
+          date: string
+          drink: string | null
+          food: string | null
+          id: string
+          notes: string | null
+          patient_id: string
+          stool: string | null
+          temp: string | null
+          time: string
+          urine: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          drink?: string | null
+          food?: string | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          stool?: string | null
+          temp?: string | null
+          time: string
+          urine?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          drink?: string | null
+          food?: string | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          stool?: string | null
+          temp?: string | null
+          time?: string
+          urine?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vital_signs_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
