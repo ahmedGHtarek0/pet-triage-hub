@@ -281,11 +281,11 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                 if (!files) return;
                 Array.from(files).forEach((file) => {
                   const reader = new FileReader();
-                  reader.onload = () => {
+                  reader.onload = async () => {
                     const photos = [...(user.photos || [])];
                     photos.push(reader.result as string);
-                    updateUser(user.id, { photos });
-                    onRefresh();
+                    await updateUser(user.id, { photos });
+                    await onRefresh();
                     toast.success("Media uploaded");
                   };
                   reader.readAsDataURL(file);
