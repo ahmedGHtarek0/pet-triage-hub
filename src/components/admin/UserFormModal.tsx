@@ -127,8 +127,10 @@ export default function UserFormModal({ user, onClose, onSave }: Props) {
             </select>
           </div>
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1">{user ? "Update" : "Add"} User</Button>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />{user ? "Updating..." : "Adding..."}</> : `${user ? "Update" : "Add"} User`}
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
           </div>
         </form>
       </div>
