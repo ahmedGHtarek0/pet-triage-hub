@@ -29,6 +29,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
   const [editingTreatment, setEditingTreatment] = useState<Treatment | null>(null);
   const [showVitalForm, setShowVitalForm] = useState(false);
   const [editingVital, setEditingVital] = useState<VitalSign | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const tabs = [
     { id: "overview" as const, label: "Overview" },
