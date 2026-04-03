@@ -92,8 +92,8 @@ export default function ContentManagerPage() {
               onChange={(e) => setContent({ ...content, hero: { ...content.hero, videoUrl: e.target.value } })}
             />
           </div>
-          <Button onClick={() => save(content)}>
-            <Save size={16} className="mr-2" /> Save Changes
+          <Button onClick={() => save(content)} disabled={saving}>
+            {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save Changes</>}
           </Button>
         </div>
       )}
