@@ -55,6 +55,8 @@ function StatusDropdown({ status, onChange }: { status: CaseStatus; onChange: (s
 export default function UserListPage({ users, onRefresh, onViewUser, onEditUser }: Props) {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [statusLoadingId, setStatusLoadingId] = useState<string | null>(null);
 
   const filtered = users
     .filter((u) => filterStatus === "all" || u.status === filterStatus)
@@ -64,15 +66,21 @@ export default function UserListPage({ users, onRefresh, onViewUser, onEditUser 
     );
 
   const handleDelete = async (id: string) => {
-    await deleteUser(id);
-    await onRefresh();
-    toast.success("User deleted successfully");
+    setLoadingId(id);
+    try {
+      await deleteUser(id);
+      await onRefresh();
+      toast.success("User deleted successfully");
+    } finally { setLoadingId(null); }
   };
 
   const handleStatusUpdate = async (id: string, status: CaseStatus) => {
-    await updateUser(id, { status });
-    await onRefresh();
-    toast.success(`Status updated to ${status}`);
+    setStatusLoadingId(id);
+    try {
+      await updateUser(id, { status });
+      await onRefresh();
+      toast.success(`Status updated to ${status}`);
+    } finally { setStatusLoadingId(null); }
   };
 
   return (
