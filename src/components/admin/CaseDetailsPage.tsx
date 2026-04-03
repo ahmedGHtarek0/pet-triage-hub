@@ -282,7 +282,7 @@ export default function CaseDetailsPage({ user, onBackToUsers, onBackToUser, onR
                   reader.onload = () => {
                     const photos = user.photos || [];
                     photos.push(reader.result as string);
-                    const { updateUser } = require("@/lib/data");
+                    updateUser(user.id, { photos });
                     updateUser(user.id, { photos });
                     onRefresh();
                     toast.success("Media uploaded");
