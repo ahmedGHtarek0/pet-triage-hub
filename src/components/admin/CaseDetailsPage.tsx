@@ -11,6 +11,7 @@ import {
   type UserRecord, type Treatment, type VitalSign,
   addTreatment, updateTreatment, deleteTreatment,
   addVitalSign, updateVitalSign, deleteVitalSign,
+  updateUser,
 } from "@/lib/data";
 import { toast } from "sonner";
 
