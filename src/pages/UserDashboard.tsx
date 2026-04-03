@@ -20,6 +20,7 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewLevel>("dashboard");
   const [activeTab, setActiveTab] = useState<"overview" | "treatment" | "vitals" | "media">("overview");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
