@@ -128,11 +128,11 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <div className="rounded-2xl overflow-hidden shadow-2xl group">
                 <img
                   src={content.about.images[0] || "/images/doctor.jpg"}
                   alt="Dr. Khaled Nasser"
-                  className="w-full h-[500px] object-cover"
+                  className="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 glass-card p-4 flex items-center gap-3">

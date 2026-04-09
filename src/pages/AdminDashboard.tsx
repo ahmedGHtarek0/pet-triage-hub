@@ -10,6 +10,8 @@ import CaseDetailsPage from "@/components/admin/CaseDetailsPage";
 import ActiveCasesPage from "@/components/admin/ActiveCasesPage";
 import RecentActivityPage from "@/components/admin/RecentActivityPage";
 import ContentManagerPage from "@/components/admin/ContentManagerPage";
+import ProductsPage from "@/components/admin/ProductsPage";
+import OrdersPage from "@/components/admin/OrdersPage";
 import UserFormModal from "@/components/admin/UserFormModal";
 import { Menu, X } from "lucide-react";
 
@@ -124,6 +126,10 @@ export default function AdminDashboard() {
         return <RecentActivityPage onViewUser={(u) => handleViewUser(u, "activity")} />;
       case "content":
         return <ContentManagerPage />;
+      case "products":
+        return <ProductsPage />;
+      case "orders":
+        return <OrdersPage />;
     }
   };
 
