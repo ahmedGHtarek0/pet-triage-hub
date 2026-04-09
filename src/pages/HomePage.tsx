@@ -188,11 +188,11 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {content.gallery.map((item, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
                 {item.type === "image" ? (
-                  <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover" />
+                  <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
-                  <video src={item.url} controls muted className="w-full h-64 object-cover" />
+                  <video src={item.url} controls muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105" />
                 )}
               </div>
             ))}
