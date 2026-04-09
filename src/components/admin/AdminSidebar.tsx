@@ -1,7 +1,7 @@
-import { Users, Activity, Clock, Globe, LogOut, LayoutDashboard } from "lucide-react";
+import { Users, Activity, Clock, Globe, LogOut, LayoutDashboard, ShoppingBag, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export type AdminPage = "overview" | "users" | "active-cases" | "activity" | "content";
+export type AdminPage = "overview" | "users" | "active-cases" | "activity" | "content" | "products" | "orders";
 
 interface Props {
   current: AdminPage;
@@ -15,6 +15,8 @@ const navItems: { id: AdminPage; label: string; icon: typeof Users }[] = [
   { id: "active-cases", label: "Active Cases", icon: Activity },
   { id: "activity", label: "Recent Activity", icon: Clock },
   { id: "content", label: "Website Content", icon: Globe },
+  { id: "products", label: "Products", icon: ShoppingBag },
+  { id: "orders", label: "Orders", icon: Package },
 ];
 
 export default function AdminSidebar({ current, onNavigate, onLogout }: Props) {

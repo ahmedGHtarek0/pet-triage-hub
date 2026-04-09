@@ -31,6 +31,8 @@ export default function Navbar() {
       ]
     : [];
 
+  const shopLink = location.pathname !== "/shop";
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -56,6 +58,11 @@ export default function Navbar() {
           <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors">
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          {shopLink && (
+            <Link to="/shop" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
+              Pet Shop
+            </Link>
+          )}
           {isHome && (
             <Link to="/login">
               <Button size="sm">Login</Button>
@@ -86,6 +93,11 @@ export default function Navbar() {
                 {l.label}
               </a>
             ))}
+            {shopLink && (
+              <Link to="/shop" onClick={() => setOpen(false)} className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors py-2">
+                Pet Shop
+              </Link>
+            )}
             {isHome && (
               <Link to="/login" onClick={() => setOpen(false)}>
                 <Button size="sm" className="w-full">Login</Button>

@@ -128,11 +128,11 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <div className="rounded-2xl overflow-hidden shadow-2xl group">
                 <img
                   src={content.about.images[0] || "/images/doctor.jpg"}
                   alt="Dr. Khaled Nasser"
-                  className="w-full h-[500px] object-cover"
+                  className="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 glass-card p-4 flex items-center gap-3">
@@ -188,11 +188,11 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {content.gallery.map((item, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
                 {item.type === "image" ? (
-                  <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover" />
+                  <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
-                  <video src={item.url} controls muted className="w-full h-64 object-cover" />
+                  <video src={item.url} controls muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105" />
                 )}
               </div>
             ))}
