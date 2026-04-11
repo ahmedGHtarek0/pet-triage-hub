@@ -50,16 +50,16 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+              className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
             >
               {l.label}
             </a>
           ))}
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors">
+          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           {shopLink && (
-            <Link to="/shop" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
+            <Link to="/shop" className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               Pet Shop
             </Link>
           )}
@@ -71,10 +71,10 @@ export default function Navbar() {
         </div>
 
         <div className="md:hidden flex items-center gap-2">
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors">
+          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <button onClick={() => setOpen(!open)} className="p-2">
+          <button onClick={() => setOpen(!open)} className="p-2 text-foreground">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -88,13 +88,13 @@ export default function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors py-2"
+                className="text-sm font-semibold text-foreground hover:text-primary transition-colors py-2"
               >
                 {l.label}
               </a>
             ))}
             {shopLink && (
-              <Link to="/shop" onClick={() => setOpen(false)} className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors py-2">
+              <Link to="/shop" onClick={() => setOpen(false)} className="text-sm font-semibold text-foreground hover:text-primary transition-colors py-2">
                 Pet Shop
               </Link>
             )}

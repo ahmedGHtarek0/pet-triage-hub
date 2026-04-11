@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ShoppingBag, Search, Filter } from "lucide-react";
+import { ShoppingBag, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ export default function PetShopPage() {
   const [category, setCategory] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [orderProduct, setOrderProduct] = useState<Product | null>(null);
+  const [orderWeight, setOrderWeight] = useState<string | undefined>();
 
   useEffect(() => {
     getProducts().then((p) => {
@@ -124,7 +125,9 @@ export default function PetShopPage() {
                     <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{product.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="font-heading font-bold text-xl text-primary">
-                        {product.price.toFixed(2)} EGP
+                        {product.quantity_type === "weight" && product.price_per_kg
+                          ? `${product.price_per_kg} EGP/kg`
+                          : `${product.price.toFixed(2)} EGP`}
                       </span>
                       <Button size="sm" variant="outline" className="rounded-full">
                         View Details
@@ -143,8 +146,9 @@ export default function PetShopPage() {
         <ProductDetailModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onOrder={() => {
+          onOrder={(w) => {
             setOrderProduct(selectedProduct);
+            setOrderWeight(w);
             setSelectedProduct(null);
           }}
         />
@@ -154,7 +158,8 @@ export default function PetShopPage() {
       {orderProduct && (
         <OrderFormModal
           product={orderProduct}
-          onClose={() => setOrderProduct(null)}
+          weightOption={orderWeight}
+          onClose={() => { setOrderProduct(null); setOrderWeight(undefined); }}
         />
       )}
 
