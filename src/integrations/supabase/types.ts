@@ -46,10 +46,13 @@ export type Database = {
           customer_phone: string
           id: string
           payment_method: string
+          payment_screenshot_url: string | null
           product_id: string | null
           product_name: string
+          quantity: number | null
           status: string
           updated_at: string
+          weight_option: string | null
         }
         Insert: {
           created_at?: string
@@ -58,10 +61,13 @@ export type Database = {
           customer_phone: string
           id?: string
           payment_method?: string
+          payment_screenshot_url?: string | null
           product_id?: string | null
           product_name: string
+          quantity?: number | null
           status?: string
           updated_at?: string
+          weight_option?: string | null
         }
         Update: {
           created_at?: string
@@ -70,10 +76,13 @@ export type Database = {
           customer_phone?: string
           id?: string
           payment_method?: string
+          payment_screenshot_url?: string | null
           product_id?: string | null
           product_name?: string
+          quantity?: number | null
           status?: string
           updated_at?: string
+          weight_option?: string | null
         }
         Relationships: [
           {
@@ -152,7 +161,10 @@ export type Database = {
           in_stock: boolean
           name: string
           price: number
+          price_per_kg: number | null
+          quantity_type: string
           updated_at: string
+          weight_options: string[] | null
         }
         Insert: {
           category?: string | null
@@ -163,7 +175,10 @@ export type Database = {
           in_stock?: boolean
           name: string
           price?: number
+          price_per_kg?: number | null
+          quantity_type?: string
           updated_at?: string
+          weight_options?: string[] | null
         }
         Update: {
           category?: string | null
@@ -174,7 +189,10 @@ export type Database = {
           in_stock?: boolean
           name?: string
           price?: number
+          price_per_kg?: number | null
+          quantity_type?: string
           updated_at?: string
+          weight_options?: string[] | null
         }
         Relationships: []
       }
