@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Loader2, ShoppingBag } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ShoppingBag, Weight, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,9 @@ export default function ProductsPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState("General");
   const [inStock, setInStock] = useState(true);
+  const [quantityType, setQuantityType] = useState<"unit" | "weight">("unit");
+  const [pricePerKg, setPricePerKg] = useState("");
+  const [weightOptionsStr, setWeightOptionsStr] = useState("");
 
   const refresh = async () => {
     const data = await getProducts();
@@ -35,6 +38,7 @@ export default function ProductsPage() {
 
   const resetForm = () => {
     setName(""); setDescription(""); setPrice(""); setImageUrl(""); setCategory("General"); setInStock(true);
+    setQuantityType("unit"); setPricePerKg(""); setWeightOptionsStr("");
     setEditing(null); setShowForm(false);
   };
 
@@ -46,20 +50,31 @@ export default function ProductsPage() {
     setImageUrl(p.image_url || "");
     setCategory(p.category || "General");
     setInStock(p.in_stock);
+    setQuantityType(p.quantity_type || "unit");
+    setPricePerKg(p.price_per_kg ? String(p.price_per_kg) : "");
+    setWeightOptionsStr((p.weight_options || []).join(", "));
     setShowForm(true);
   };
 
   const handleSave = async () => {
     if (!name.trim() || !price.trim()) { toast.error("Name and price are required"); return; }
+    if (quantityType === "weight" && !pricePerKg.trim()) { toast.error("Price per kg is required for weight-based products"); return; }
     setSaving(true);
     try {
-      const data = {
+      const weightOptions = weightOptionsStr
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const data: any = {
         name: name.trim(),
         description: description.trim(),
         price: parseFloat(price),
         image_url: imageUrl.trim(),
         category: category.trim(),
         in_stock: inStock,
+        quantity_type: quantityType,
+        price_per_kg: quantityType === "weight" ? parseFloat(pricePerKg) : null,
+        weight_options: quantityType === "weight" ? weightOptions : [],
       };
       if (editing) {
         await updateProduct(editing.id, data);
@@ -117,9 +132,39 @@ export default function ProductsPage() {
                 <Label>Description</Label>
                 <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product description" rows={3} />
               </div>
+
+              {/* Quantity Type */}
+              <div>
+                <Label className="mb-2 block">Sold By</Label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setQuantityType("unit")}
+                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${
+                      quantityType === "unit"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <Hash size={16} /> Per Unit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuantityType("weight")}
+                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${
+                      quantityType === "weight"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <Weight size={16} /> By Weight
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Price (EGP)</Label>
+                  <Label>{quantityType === "weight" ? "Base Price (EGP)" : "Price (EGP)"}</Label>
                   <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="0.00" />
                 </div>
                 <div>
@@ -127,6 +172,21 @@ export default function ProductsPage() {
                   <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="General" />
                 </div>
               </div>
+
+              {quantityType === "weight" && (
+                <>
+                  <div>
+                    <Label>Price per KG (EGP)</Label>
+                    <Input type="number" value={pricePerKg} onChange={(e) => setPricePerKg(e.target.value)} placeholder="e.g. 150" />
+                  </div>
+                  <div>
+                    <Label>Weight Options (comma-separated)</Label>
+                    <Input value={weightOptionsStr} onChange={(e) => setWeightOptionsStr(e.target.value)} placeholder="0.5kg, 1kg, 2kg, 5kg" />
+                    <p className="text-xs text-muted-foreground mt-1">e.g. 0.5kg, 1kg, 2kg</p>
+                  </div>
+                </>
+              )}
+
               <div>
                 <Label>Image URL</Label>
                 <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." />
@@ -166,10 +226,15 @@ export default function ProductsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-semibold truncate">{p.name}</h3>
+                  {p.quantity_type === "weight" && <Badge variant="outline" className="text-xs">By Weight</Badge>}
                   {!p.in_stock && <Badge variant="destructive" className="text-xs">Out of Stock</Badge>}
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{p.description}</p>
-                <p className="text-sm font-medium text-primary mt-1">{p.price.toFixed(2)} EGP • {p.category}</p>
+                <p className="text-sm font-medium text-primary mt-1">
+                  {p.price.toFixed(2)} EGP
+                  {p.quantity_type === "weight" && p.price_per_kg && ` • ${p.price_per_kg} EGP/kg`}
+                  {" • "}{p.category}
+                </p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil size={14} /></Button>
