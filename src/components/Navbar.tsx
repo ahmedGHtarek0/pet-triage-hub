@@ -50,16 +50,16 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+              className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
             >
               {l.label}
             </a>
           ))}
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors">
+          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           {shopLink && (
-            <Link to="/shop" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
+            <Link to="/shop" className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               Pet Shop
             </Link>
           )}
