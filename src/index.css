@@ -91,6 +91,111 @@
     --sidebar-border: 220 20% 18%;
     --sidebar-ring: 187 70% 50%;
   }
+
+  /* Ocean theme — deep blue, aqua accents */
+  .ocean {
+    --background: 205 60% 96%;
+    --foreground: 215 60% 12%;
+    --card: 200 50% 99%;
+    --card-foreground: 215 60% 12%;
+    --popover: 200 50% 99%;
+    --popover-foreground: 215 60% 12%;
+    --primary: 200 90% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 40% 90%;
+    --secondary-foreground: 215 60% 12%;
+    --muted: 200 30% 92%;
+    --muted-foreground: 215 20% 45%;
+    --accent: 175 70% 42%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 40% 85%;
+    --input: 200 40% 85%;
+    --ring: 200 90% 40%;
+    --glass: 200 50% 99%;
+    --glass-border: 200 40% 85%;
+    --hero-overlay-from: 215 80% 25%;
+    --hero-overlay-to: 200 70% 15%;
+    --sidebar-background: 200 50% 97%;
+    --sidebar-foreground: 215 40% 25%;
+    --sidebar-primary: 200 90% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 40% 92%;
+    --sidebar-accent-foreground: 215 60% 12%;
+    --sidebar-border: 200 40% 88%;
+    --sidebar-ring: 200 90% 40%;
+  }
+
+  /* Sunset theme — warm orange/pink */
+  .sunset {
+    --background: 30 50% 97%;
+    --foreground: 15 50% 15%;
+    --card: 30 60% 99%;
+    --card-foreground: 15 50% 15%;
+    --popover: 30 60% 99%;
+    --popover-foreground: 15 50% 15%;
+    --primary: 18 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 40% 92%;
+    --secondary-foreground: 15 50% 15%;
+    --muted: 30 30% 94%;
+    --muted-foreground: 15 20% 45%;
+    --accent: 340 75% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 40% 88%;
+    --input: 30 40% 88%;
+    --ring: 18 85% 55%;
+    --glass: 30 60% 99%;
+    --glass-border: 30 40% 88%;
+    --hero-overlay-from: 15 70% 25%;
+    --hero-overlay-to: 340 60% 20%;
+    --sidebar-background: 30 50% 97%;
+    --sidebar-foreground: 15 40% 25%;
+    --sidebar-primary: 18 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 40% 93%;
+    --sidebar-accent-foreground: 15 50% 15%;
+    --sidebar-border: 30 40% 88%;
+    --sidebar-ring: 18 85% 55%;
+  }
+
+  /* Forest theme — deep green */
+  .forest {
+    --background: 130 25% 96%;
+    --foreground: 145 50% 10%;
+    --card: 130 30% 99%;
+    --card-foreground: 145 50% 10%;
+    --popover: 130 30% 99%;
+    --popover-foreground: 145 50% 10%;
+    --primary: 145 60% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 130 25% 90%;
+    --secondary-foreground: 145 50% 10%;
+    --muted: 130 20% 92%;
+    --muted-foreground: 145 15% 40%;
+    --accent: 90 55% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 130 25% 85%;
+    --input: 130 25% 85%;
+    --ring: 145 60% 32%;
+    --glass: 130 30% 99%;
+    --glass-border: 130 25% 85%;
+    --hero-overlay-from: 145 70% 18%;
+    --hero-overlay-to: 130 50% 10%;
+    --sidebar-background: 130 25% 97%;
+    --sidebar-foreground: 145 40% 20%;
+    --sidebar-primary: 145 60% 32%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 130 25% 92%;
+    --sidebar-accent-foreground: 145 50% 10%;
+    --sidebar-border: 130 25% 88%;
+    --sidebar-ring: 145 60% 32%;
+  }
 }
 
 @layer base {
