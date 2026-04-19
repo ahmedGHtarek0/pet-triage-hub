@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { Heart, Stethoscope, Syringe, Scissors, Phone, MapPin, Facebook, Sparkles, Award, ShieldCheck } from "lucide-react";
+import { Heart, Stethoscope, Syringe, Scissors, Phone, MapPin, Facebook, Sparkles, Award, ShieldCheck, Expand } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import Navbar from "@/components/Navbar";
+import MediaLightbox, { type MediaItem } from "@/components/MediaLightbox";
 import { getSiteContent, type SiteContent } from "@/lib/data";
 import heroPoster from "@/assets/hero-poster.jpg";
 import vetCheckup from "@/assets/vet-checkup.jpg";
@@ -49,6 +50,7 @@ function getEmbedUrl(url: string): string {
 export default function HomePage() {
   const [content, setContent] = useState<SiteContent | null>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [lightbox, setLightbox] = useState<{ items: MediaItem[]; index: number } | null>(null);
 
   useEffect(() => {
     getSiteContent().then(setContent);
