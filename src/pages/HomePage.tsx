@@ -149,12 +149,12 @@ export default function HomePage() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to="/login">
-              <Button size="lg" className="animate-pulse-glow magnetic-btn shine-effect">
+              <Button size="lg" className="animate-pulse-glow magnetic-btn shine-effect bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-2xl">
                 <Sparkles className="mr-2" size={18} /> Login
               </Button>
             </Link>
             <a href="#contact">
-              <Button size="lg" variant="outline" className="border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 magnetic-btn backdrop-blur-sm">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 magnetic-btn font-bold shadow-2xl border-2 border-white">
                 Contact Us
               </Button>
             </a>
