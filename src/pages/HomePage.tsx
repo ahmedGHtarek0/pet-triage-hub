@@ -271,14 +271,21 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {displayGallery.map((item, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group relative card-3d">
+              <button
+                key={i}
+                onClick={() => setLightbox({ items: displayGallery as MediaItem[], index: i })}
+                className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group relative card-3d cursor-zoom-in"
+              >
                 {item.type === "image" ? (
                   <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-125" />
                 ) : (
-                  <video src={item.url} controls muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <video src={item.url} muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/90 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <Expand size={18} className="text-primary" />
+                </div>
+              </button>
             ))}
           </div>
         </div>
