@@ -371,6 +371,14 @@ export default function HomePage() {
           <p className="text-muted-foreground text-xs mt-1">Led by Dr. Khaled Nasser</p>
         </div>
       </footer>
+
+      {lightbox && (
+        <MediaLightbox
+          items={lightbox.items}
+          initialIndex={lightbox.index}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </div>
   );
 }
