@@ -1,8 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { Search, Plus, Eye, Edit, Trash2, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Search, Plus, Edit, Trash2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { UserRecord, CaseStatus } from "@/lib/data";
 import { deleteUser, updateUser } from "@/lib/data";
 import { toast } from "sonner";
@@ -15,40 +21,26 @@ interface Props {
 }
 
 function StatusDropdown({ status, onChange }: { status: CaseStatus; onChange: (s: CaseStatus) => void }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
   return (
-    <div className="relative" ref={ref}>
-      <button
-        className="flex items-center gap-1"
-        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
-      >
-        <StatusBadge status={status} />
-        <ChevronDown size={14} className="text-muted-foreground" />
-      </button>
-      {open && (
-        <div className="absolute top-full right-0 mt-1 bg-card border border-border rounded-lg shadow-xl py-1 z-20 min-w-[140px]">
-          {(["Improving", "Stable", "Critical", "Euthanized"] as CaseStatus[]).map((s) => (
-            <button
-              key={s}
-              onClick={(e) => { e.stopPropagation(); onChange(s); setOpen(false); }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+        <button className="flex items-center gap-1 hover:opacity-80 transition-opacity">
+          <StatusBadge status={status} />
+          <ChevronDown size={14} className="text-muted-foreground" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="z-[100] min-w-[160px] bg-card border border-border shadow-2xl animate-scale-in">
+        {(["Improving", "Stable", "Critical", "Euthanized"] as CaseStatus[]).map((s) => (
+          <DropdownMenuItem
+            key={s}
+            onClick={(e) => { e.stopPropagation(); onChange(s); }}
+            className="cursor-pointer font-medium"
+          >
+            <StatusBadge status={s} />
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
