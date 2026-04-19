@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
   const location = useLocation();
   const isHome = location.pathname === "/";
 
@@ -15,11 +15,6 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const toggleDark = () => {
-    document.documentElement.classList.toggle("dark");
-    setDark(!dark);
-  };
 
   const navLinks = isHome
     ? [
@@ -55,9 +50,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          <ThemeSwitcher />
           {shopLink && (
             <Link to="/shop" className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               Pet Shop
@@ -71,9 +64,7 @@ export default function Navbar() {
         </div>
 
         <div className="md:hidden flex items-center gap-2">
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          <ThemeSwitcher />
           <button onClick={() => setOpen(!open)} className="p-2 text-foreground">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>

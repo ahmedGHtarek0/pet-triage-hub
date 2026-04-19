@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { Heart, Stethoscope, Syringe, Scissors, Phone, MapPin, Facebook, Sparkles, Award, ShieldCheck } from "lucide-react";
+import { Heart, Stethoscope, Syringe, Scissors, Phone, MapPin, Facebook, Sparkles, Award, ShieldCheck, Expand } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import Navbar from "@/components/Navbar";
+import MediaLightbox, { type MediaItem } from "@/components/MediaLightbox";
 import { getSiteContent, type SiteContent } from "@/lib/data";
 import heroPoster from "@/assets/hero-poster.jpg";
 import vetCheckup from "@/assets/vet-checkup.jpg";
@@ -49,6 +50,7 @@ function getEmbedUrl(url: string): string {
 export default function HomePage() {
   const [content, setContent] = useState<SiteContent | null>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [lightbox, setLightbox] = useState<{ items: MediaItem[]; index: number } | null>(null);
 
   useEffect(() => {
     getSiteContent().then(setContent);
@@ -203,7 +205,10 @@ export default function HomePage() {
             </div>
             <div className="relative group">
               <div className="absolute -inset-2 bg-gradient-to-r from-primary to-accent rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <button
+                onClick={() => setLightbox({ items: [{ type: "image", url: aboutImage, alt: "Dr. Khaled Nasser" }], index: 0 })}
+                className="relative rounded-2xl overflow-hidden shadow-2xl block w-full cursor-zoom-in"
+              >
                 <img
                   src={aboutImage}
                   alt="Dr. Khaled Nasser"
@@ -211,7 +216,10 @@ export default function HomePage() {
                   className="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
+                <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/90 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <Expand size={18} className="text-primary" />
+                </div>
+              </button>
               <div className="absolute -bottom-4 -left-4 glass-card p-4 flex items-center gap-3 animate-float">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <Stethoscope className="text-primary-foreground" size={24} />
@@ -269,14 +277,21 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {displayGallery.map((item, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group relative card-3d">
+              <button
+                key={i}
+                onClick={() => setLightbox({ items: displayGallery as MediaItem[], index: i })}
+                className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group relative card-3d cursor-zoom-in"
+              >
                 {item.type === "image" ? (
                   <img src={item.url} alt="" loading="lazy" className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-125" />
                 ) : (
-                  <video src={item.url} controls muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <video src={item.url} muted className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/90 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <Expand size={18} className="text-primary" />
+                </div>
+              </button>
             ))}
           </div>
         </div>
@@ -362,6 +377,14 @@ export default function HomePage() {
           <p className="text-muted-foreground text-xs mt-1">Led by Dr. Khaled Nasser</p>
         </div>
       </footer>
+
+      {lightbox && (
+        <MediaLightbox
+          items={lightbox.items}
+          initialIndex={lightbox.index}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </div>
   );
 }
