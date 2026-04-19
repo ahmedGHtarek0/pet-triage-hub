@@ -205,7 +205,10 @@ export default function HomePage() {
             </div>
             <div className="relative group">
               <div className="absolute -inset-2 bg-gradient-to-r from-primary to-accent rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <button
+                onClick={() => setLightbox({ items: [{ type: "image", url: aboutImage, alt: "Dr. Khaled Nasser" }], index: 0 })}
+                className="relative rounded-2xl overflow-hidden shadow-2xl block w-full cursor-zoom-in"
+              >
                 <img
                   src={aboutImage}
                   alt="Dr. Khaled Nasser"
@@ -213,7 +216,10 @@ export default function HomePage() {
                   className="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
+                <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/90 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <Expand size={18} className="text-primary" />
+                </div>
+              </button>
               <div className="absolute -bottom-4 -left-4 glass-card p-4 flex items-center gap-3 animate-float">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <Stethoscope className="text-primary-foreground" size={24} />
