@@ -50,9 +50,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          <ThemeSwitcher />
           {shopLink && (
             <Link to="/shop" className="text-sm font-semibold text-foreground hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               Pet Shop
@@ -66,9 +64,7 @@ export default function Navbar() {
         </div>
 
         <div className="md:hidden flex items-center gap-2">
-          <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary transition-colors text-foreground">
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          <ThemeSwitcher />
           <button onClick={() => setOpen(!open)} className="p-2 text-foreground">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
