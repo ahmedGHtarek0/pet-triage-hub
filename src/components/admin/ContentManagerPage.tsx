@@ -69,8 +69,11 @@ export default function ContentManagerPage() {
       </div>
 
       {activeTab === "hero" && (
-        <div className="glass-card p-6 space-y-4">
-          <h3 className="font-heading font-semibold">Hero Section</h3>
+        <div className="glass-card p-6 space-y-4 animate-scale-in">
+          <h3 className="font-heading font-semibold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Hero Section
+          </h3>
           <div>
             <label className="text-xs font-medium text-muted-foreground">Title</label>
             <Input
@@ -85,14 +88,7 @@ export default function ContentManagerPage() {
               onChange={(e) => setContent({ ...content, hero: { ...content.hero, subtitle: e.target.value } })}
             />
           </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">Background Video URL</label>
-            <Input
-              value={content.hero.videoUrl}
-              onChange={(e) => setContent({ ...content, hero: { ...content.hero, videoUrl: e.target.value } })}
-            />
-          </div>
-          <Button onClick={() => save(content)} disabled={saving}>
+          <Button onClick={() => save(content)} disabled={saving} className="magnetic-btn">
             {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save Changes</>}
           </Button>
         </div>
@@ -116,21 +112,88 @@ export default function ContentManagerPage() {
       )}
 
       {activeTab === "services" && (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-in">
           {content.services.map((svc, i) => (
-            <div key={i} className="glass-card p-6 space-y-3">
+            <div key={i} className="glass-card p-6 space-y-3 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300" style={{ animationDelay: `${i * 80}ms` }}>
               <div className="flex justify-between items-center">
-                <h3 className="font-heading font-semibold text-sm">Service {i + 1}</h3>
+                <h3 className="font-heading font-semibold text-sm flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold">{i + 1}</span>
+                  Service {i + 1}
+                </h3>
                 <button
                   onClick={() => {
                     const services = content.services.filter((_, idx) => idx !== i);
                     save({ ...content, services });
                   }}
-                  className="p-1.5 hover:bg-destructive/10 text-destructive rounded"
+                  className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors"
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
+
+              {/* Service image upload */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">Service Image</label>
+                <div className="flex items-center gap-3">
+                  {svc.image ? (
+                    <img src={svc.image} alt="" className="w-20 h-20 object-cover rounded-lg border border-border" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-lg border-2 border-dashed border-border flex items-center justify-center text-muted-foreground">
+                      <Image size={20} />
+                    </div>
+                  )}
+                  <div className="flex-1 flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const services = [...content.services];
+                            services[i] = { ...services[i], image: reader.result as string };
+                            setContent({ ...content, services });
+                          };
+                          reader.readAsDataURL(file);
+                        };
+                        input.click();
+                      }}
+                    >
+                      <Image size={14} className="mr-1" /> Upload
+                    </Button>
+                    {svc.image && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const services = [...content.services];
+                          services[i] = { ...services[i], image: "" };
+                          setContent({ ...content, services });
+                        }}
+                      >
+                        <X size={14} />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                <Input
+                  placeholder="Or paste image URL"
+                  value={svc.image || ""}
+                  onChange={(e) => {
+                    const services = [...content.services];
+                    services[i] = { ...services[i], image: e.target.value };
+                    setContent({ ...content, services });
+                  }}
+                />
+              </div>
+
               <Input
                 placeholder="Title"
                 value={svc.title}
@@ -140,7 +203,7 @@ export default function ContentManagerPage() {
                   setContent({ ...content, services });
                 }}
               />
-              <Input
+              <textarea
                 placeholder="Description"
                 value={svc.description}
                 onChange={(e) => {
@@ -148,21 +211,31 @@ export default function ContentManagerPage() {
                   services[i] = { ...services[i], description: e.target.value };
                   setContent({ ...content, services });
                 }}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
               />
-              <Input
-                placeholder="Icon (Heart, Scissors, Syringe)"
-                value={svc.icon}
-                onChange={(e) => {
-                  const services = [...content.services];
-                  services[i] = { ...services[i], icon: e.target.value };
-                  setContent({ ...content, services });
-                }}
-              />
+              <div>
+                <label className="text-xs font-medium text-muted-foreground">Icon</label>
+                <select
+                  value={svc.icon}
+                  onChange={(e) => {
+                    const services = [...content.services];
+                    services[i] = { ...services[i], icon: e.target.value };
+                    setContent({ ...content, services });
+                  }}
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="Heart">❤️ Heart</option>
+                  <option value="Stethoscope">🩺 Stethoscope</option>
+                  <option value="Syringe">💉 Syringe</option>
+                  <option value="Scissors">✂️ Scissors</option>
+                </select>
+              </div>
             </div>
           ))}
           <div className="flex gap-3">
             <Button
               variant="outline"
+              className="magnetic-btn"
               onClick={() => {
                 const services = [...content.services, { title: "", description: "", icon: "Heart", image: "" }];
                 setContent({ ...content, services });
@@ -170,7 +243,7 @@ export default function ContentManagerPage() {
             >
               <Plus size={16} className="mr-2" /> Add Service
             </Button>
-            <Button onClick={() => save(content)} disabled={saving}>
+            <Button onClick={() => save(content)} disabled={saving} className="magnetic-btn">
               {saving ? <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />Saving...</> : <><Save size={16} className="mr-2" /> Save All</>}
             </Button>
           </div>
