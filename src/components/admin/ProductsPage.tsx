@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Pencil, Trash2, Loader2, ShoppingBag, Weight, Hash, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,7 +139,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
+      {showForm && createPortal(
         <div className="fixed inset-0 z-[100] overflow-y-auto">
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={resetForm} />
           <div className="relative min-h-full flex items-center justify-center p-4">
@@ -266,7 +267,8 @@ export default function ProductsPage() {
             </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Product List */}

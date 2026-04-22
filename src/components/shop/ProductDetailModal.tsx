@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, ShoppingBag, ShoppingCart, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/products";
@@ -28,7 +29,7 @@ export default function ProductDetailModal({ product, onClose, onOrder }: Props)
   };
   const weightLabel = `${weight}kg`;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] overflow-y-auto">
       <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={onClose} />
       <div className="relative min-h-full flex items-center justify-center p-4">
@@ -106,6 +107,7 @@ export default function ProductDetailModal({ product, onClose, onOrder }: Props)
         </div>
       </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
