@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Loader2, ShoppingBag, Weight, Hash } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, Pencil, Trash2, Loader2, ShoppingBag, Weight, Hash, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { getProducts, addProduct, updateProduct, deleteProduct, type Product } from "@/lib/products";
+import { getProducts, addProduct, updateProduct, deleteProduct, uploadProductImage, type Product } from "@/lib/products";
 import { toast } from "sonner";
 
 export default function ProductsPage() {
@@ -26,7 +26,10 @@ export default function ProductsPage() {
   const [inStock, setInStock] = useState(true);
   const [quantityType, setQuantityType] = useState<"unit" | "weight">("unit");
   const [pricePerKg, setPricePerKg] = useState("");
-  const [weightOptionsStr, setWeightOptionsStr] = useState("");
+  const [minWeight, setMinWeight] = useState("0.5");
+  const [maxWeight, setMaxWeight] = useState("100");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refresh = async () => {
     const data = await getProducts();
@@ -38,7 +41,7 @@ export default function ProductsPage() {
 
   const resetForm = () => {
     setName(""); setDescription(""); setPrice(""); setImageUrl(""); setCategory("General"); setInStock(true);
-    setQuantityType("unit"); setPricePerKg(""); setWeightOptionsStr("");
+    setQuantityType("unit"); setPricePerKg(""); setMinWeight("0.5"); setMaxWeight("100");
     setEditing(null); setShowForm(false);
   };
 
@@ -52,8 +55,27 @@ export default function ProductsPage() {
     setInStock(p.in_stock);
     setQuantityType(p.quantity_type || "unit");
     setPricePerKg(p.price_per_kg ? String(p.price_per_kg) : "");
-    setWeightOptionsStr((p.weight_options || []).join(", "));
+    // weight_options now stores [min, max]
+    const opts = p.weight_options || [];
+    setMinWeight(opts[0] || "0.5");
+    setMaxWeight(opts[1] || "100");
     setShowForm(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error("Only image files allowed"); return; }
+    setUploading(true);
+    try {
+      const url = await uploadProductImage(file);
+      setImageUrl(url);
+      toast.success("Image uploaded");
+    } catch {
+      toast.error("Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -61,10 +83,8 @@ export default function ProductsPage() {
     if (quantityType === "weight" && !pricePerKg.trim()) { toast.error("Price per kg is required for weight-based products"); return; }
     setSaving(true);
     try {
-      const weightOptions = weightOptionsStr
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const weightOptions =
+        quantityType === "weight" ? [minWeight.trim() || "0.5", maxWeight.trim() || "100"] : [];
       const data: any = {
         name: name.trim(),
         description: description.trim(),
@@ -74,7 +94,7 @@ export default function ProductsPage() {
         in_stock: inStock,
         quantity_type: quantityType,
         price_per_kg: quantityType === "weight" ? parseFloat(pricePerKg) : null,
-        weight_options: quantityType === "weight" ? weightOptions : [],
+        weight_options: weightOptions,
       };
       if (editing) {
         await updateProduct(editing.id, data);
@@ -179,17 +199,58 @@ export default function ProductsPage() {
                     <Label>Price per KG (EGP)</Label>
                     <Input type="number" value={pricePerKg} onChange={(e) => setPricePerKg(e.target.value)} placeholder="e.g. 150" />
                   </div>
-                  <div>
-                    <Label>Weight Options (comma-separated)</Label>
-                    <Input value={weightOptionsStr} onChange={(e) => setWeightOptionsStr(e.target.value)} placeholder="0.5kg, 1kg, 2kg, 5kg" />
-                    <p className="text-xs text-muted-foreground mt-1">e.g. 0.5kg, 1kg, 2kg</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Min Weight (kg)</Label>
+                      <Input type="number" step="0.1" min="0.1" value={minWeight} onChange={(e) => setMinWeight(e.target.value)} placeholder="0.5" />
+                    </div>
+                    <div>
+                      <Label>Max Weight (kg)</Label>
+                      <Input type="number" step="0.1" min="0.1" value={maxWeight} onChange={(e) => setMaxWeight(e.target.value)} placeholder="100" />
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground -mt-2">Customers will pick any weight in this range using +/- controls.</p>
                 </>
               )}
 
               <div>
-                <Label>Image URL</Label>
-                <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." />
+                <Label className="mb-2 block">Product Image</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                {imageUrl ? (
+                  <div className="relative rounded-xl border border-border overflow-hidden group">
+                    <img src={imageUrl} alt="Product" className="w-full max-h-48 object-contain bg-secondary/20" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl("")}
+                      className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={uploading}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors text-muted-foreground hover:text-primary disabled:opacity-50"
+                  >
+                    {uploading ? <Loader2 size={24} className="animate-spin" /> : <Upload size={24} />}
+                    <span className="text-sm font-medium">{uploading ? "Uploading..." : "Upload Product Image"}</span>
+                    <span className="text-xs">PNG, JPG up to ~10MB</span>
+                  </button>
+                )}
+                <Input
+                  className="mt-2"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="Or paste an image URL"
+                />
               </div>
               <div className="flex items-center gap-3">
                 <Switch checked={inStock} onCheckedChange={setInStock} />
