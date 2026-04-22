@@ -139,7 +139,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
+      {showForm && createPortal(
         <div className="fixed inset-0 z-[100] overflow-y-auto">
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={resetForm} />
           <div className="relative min-h-full flex items-center justify-center p-4">
