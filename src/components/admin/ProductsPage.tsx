@@ -264,6 +264,7 @@ export default function ProductsPage() {
                 <Button variant="outline" onClick={resetForm}>Cancel</Button>
               </div>
             </div>
+            </div>
           </div>
         </div>
       )}
