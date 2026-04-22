@@ -329,21 +329,21 @@ export default function HomePage() {
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Contact <span className="text-gradient-animated">Us</span></h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <a href="tel:+201151121767" className="glass-card-hover p-8 text-center group card-3d">
+            <a href="https://wa.me/201151121767" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center group card-3d cursor-pointer">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-transform">
                 <Phone className="text-primary-foreground" size={28} />
               </div>
-              <h3 className="font-heading font-semibold mb-2">Phone</h3>
+              <h3 className="font-heading font-semibold mb-2">WhatsApp</h3>
               <p className="text-muted-foreground text-sm">01151121767</p>
             </a>
-            <a href="https://www.facebook.com/people/Pet-planet-clinic/61551599002613/" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center group card-3d">
+            <a href="https://www.facebook.com/people/Pet-planet-clinic/61551599002613/" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center group card-3d cursor-pointer">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-transform">
                 <Facebook className="text-primary-foreground" size={28} />
               </div>
               <h3 className="font-heading font-semibold mb-2">Facebook</h3>
               <p className="text-muted-foreground text-sm">Pet Planet Clinic</p>
             </a>
-            <a href="https://www.google.com/maps?q=24.062134636139163,32.88546865767205" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center group card-3d">
+            <a href="https://www.google.com/maps/search/?api=1&query=24.062134636139163,32.88546865767205" target="_blank" rel="noopener noreferrer" className="glass-card-hover p-8 text-center group card-3d cursor-pointer">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-transform">
                 <MapPin className="text-primary-foreground" size={28} />
               </div>
