@@ -139,9 +139,10 @@ export default function ProductsPage() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={resetForm} />
-          <div className="relative bg-card rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-scale-in border border-border p-6">
+          <div className="relative min-h-full flex items-center justify-center p-4">
+            <div className="relative bg-card rounded-2xl shadow-2xl max-w-md w-full animate-scale-in border border-border p-6 my-8">
             <h3 className="font-heading text-xl font-bold mb-4">{editing ? "Edit Product" : "Add Product"}</h3>
             <div className="space-y-4">
               <div>
@@ -262,6 +263,7 @@ export default function ProductsPage() {
                 </Button>
                 <Button variant="outline" onClick={resetForm}>Cancel</Button>
               </div>
+            </div>
             </div>
           </div>
         </div>

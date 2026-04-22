@@ -29,9 +29,10 @@ export default function ProductDetailModal({ product, onClose, onOrder }: Props)
   const weightLabel = `${weight}kg`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] overflow-y-auto">
       <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-card rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in border border-border">
+      <div className="relative min-h-full flex items-center justify-center p-4">
+        <div className="relative bg-card rounded-2xl shadow-2xl max-w-lg w-full animate-scale-in border border-border my-8">
         <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted z-10">
           <X size={20} />
         </button>
@@ -103,6 +104,7 @@ export default function ProductDetailModal({ product, onClose, onOrder }: Props)
             </Button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
