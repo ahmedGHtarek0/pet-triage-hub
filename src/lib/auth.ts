@@ -1,4 +1,4 @@
-import { ADMIN_PHONE } from "./data";
+import { getAdminPhone } from "./data";
 import { supabase } from "@/integrations/supabase/client";
 
 const AUTH_KEY = "petplanet_auth";
@@ -10,21 +10,25 @@ export interface AuthState {
   phone: string;
 }
 
+const normalizePhone = (p: string) => p.replace(/[\s\-()+]/g, "").trim();
+
 export async function login(phone: string): Promise<{ success: boolean; role: AuthRole; error?: string }> {
-  if (phone === ADMIN_PHONE) {
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "admin", phone }));
+  const input = normalizePhone(phone);
+  const adminPhone = normalizePhone(getAdminPhone());
+  if (input === adminPhone) {
+    localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "admin", phone: input }));
     return { success: true, role: "admin" };
   }
 
-  // Check database for user
+  // Check database for user — fetch all and match normalized to handle spaces/formatting
   const { data } = await supabase
     .from("patients")
-    .select("id")
-    .eq("owner_phone", phone)
-    .maybeSingle();
+    .select("id, owner_phone");
 
-  if (data) {
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "user", phone }));
+  const match = (data || []).find((p) => normalizePhone(p.owner_phone || "") === input);
+
+  if (match) {
+    localStorage.setItem(AUTH_KEY, JSON.stringify({ role: "user", phone: input }));
     return { success: true, role: "user" };
   }
 
