@@ -72,7 +72,21 @@ export interface SiteContent {
   gallery: { type: "image" | "video"; url: string }[];
 }
 
-export const ADMIN_PHONE = "1730183313455233839";
+const ADMIN_PHONE_DEFAULT = "1730183313455233839";
+const ADMIN_PHONE_KEY = "petplanet_admin_phone";
+
+export function getAdminPhone(): string {
+  if (typeof window === "undefined") return ADMIN_PHONE_DEFAULT;
+  return localStorage.getItem(ADMIN_PHONE_KEY) || ADMIN_PHONE_DEFAULT;
+}
+
+export function setAdminPhone(phone: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(ADMIN_PHONE_KEY, phone);
+}
+
+// Backwards compat for any existing imports
+export const ADMIN_PHONE = ADMIN_PHONE_DEFAULT;
 
 // ============ Helpers: map DB rows to app types ============
 
